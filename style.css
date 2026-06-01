@@ -341,6 +341,9 @@ th, td {
     justify-content: space-between;
 }
 
+ion-icon {
+    color: white !important;
+}
 .link h3 {
     font-size: 18px;
     margin-bottom: 15px;
