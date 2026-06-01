@@ -112,6 +112,14 @@ body::before {
     width: 25px;
 }
 
+.menu-icono {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(94%) saturate(1234%) hue-rotate(350deg) brightness(102%) contrast(101%);
+}
+
+.menu-icono {
+    filter: brightness(0) invert(1);
+}
+
 .menu label {
     cursor: pointer;
     display: none;
