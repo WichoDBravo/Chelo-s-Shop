@@ -82,6 +82,7 @@ body::before {
 
 
 .container-form h2{
+    color: white;
     font-size: 30px;
     margin-bottom: 20px;
 }
@@ -97,6 +98,10 @@ body::before {
     border-radius: 6px;
     padding: 8px;
     cursor: pointer;
+}
+
+ion-icon {
+    color: white !important;
 }
 
 .container-form span{
