@@ -100,7 +100,11 @@ body::before {
     cursor: pointer;
 }
 
+ion-icon {
+    color: white !important;
+
 .container-form span{
+    color: white;
     font-size: 12px;
     margin-bottom: 15px;
 }
@@ -115,7 +119,7 @@ body::before {
     align-items: center;
     gap: 8px;
     padding: 0 15px;
-    background-color: #242424;
+    background-color: #141414;
 }
 
 .container-input input{
@@ -127,8 +131,7 @@ body::before {
 }
 /* Input de recuperar contraseña */
 .container-form a{
-    border: 2px solid red;
-    color: rgb(255, 255, 255);
+    color: white;;
     font-size: 14px;
     margin-bottom: 20px;
     margin-top: 5px;   
