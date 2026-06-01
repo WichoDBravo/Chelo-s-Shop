@@ -105,6 +105,7 @@ ion-icon {
 }
 
 .container-form span{
+    color: white;
     font-size: 12px;
     margin-bottom: 15px;
 }
@@ -119,7 +120,7 @@ ion-icon {
     align-items: center;
     gap: 8px;
     padding: 0 15px;
-    background-color: #141414;
+    background-color: #272727;
 }
 
 .container-input input{
