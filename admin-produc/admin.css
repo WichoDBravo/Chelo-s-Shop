@@ -124,6 +124,15 @@ body::before {
     width: 25px;
 }
 
+.menu-icono {
+    filter: brightness(0) saturate(100%) invert(65%) sepia(94%) saturate(1234%) hue-rotate(350deg) brightness(102%) contrast(101%);
+}
+
+.menu-icono {
+    filter: brightness(0) invert(1);
+}
+
+
 .menu label {
     cursor: pointer;
     display: none;
@@ -700,4 +709,170 @@ th {
 .btn-cancelar-pedido:hover {
     background: #dc2626;
     transform: scale(1.02);
+}
+
+/* ============================================ */
+/* RESPONSIVE PARA PEDIDOS (MÓVIL) */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    .admin-panel {
+        padding: 80px 12px 30px;
+    }
+
+    .admin-form-container {
+        padding: 15px;
+    }
+
+    /* Filtros en fila flexible */
+    .filtros-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-filtro {
+        flex: 1;
+        min-width: 90px;
+        text-align: center;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    /* Tarjetas de pedido */
+    .pedido-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    /* Cabecera del pedido en columna */
+    .pedido-card > div:first-child {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .pedido-card > div:first-child > div:last-child {
+        text-align: left;
+        width: 100%;
+    }
+
+    /* Tabla convertida en bloques */
+    .pedido-card table,
+    .pedido-card thead,
+    .pedido-card tbody,
+    .pedido-card tr,
+    .pedido-card th,
+    .pedido-card td {
+        display: block;
+    }
+
+    .pedido-card thead {
+        display: none;
+    }
+
+    .pedido-card tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .pedido-card td {
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .pedido-card td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #ff9000;
+        width: 40%;
+    }
+
+    /* Selector de estado y botón cancelar */
+    .select-estado {
+        width: 100%;
+        margin-top: 8px;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .btn-cancelar-pedido {
+        width: 100%;
+        margin-top: 8px;
+        padding: 10px 12px;
+    }
+
+    /* Títulos y textos */
+    .pedido-card h3 {
+        font-size: 16px;
+    }
+
+    .pedido-card p {
+        font-size: 13px;
+    }
+
+    .pedido-card .total-pedido {
+        font-size: 20px;
+    }
+
+    /* Grid de productos en admin */
+    .productos-admin-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+    }
+
+    .producto-card {
+        width: 100%;
+    }
+
+    .producto-card button {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-panel {
+        padding: 70px 10px 20px;
+    }
+
+    .admin-form-container {
+        padding: 12px;
+    }
+
+    .btn-filtro {
+        min-width: 80px;
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .pedido-card {
+        padding: 12px;
+    }
+
+    .pedido-card h3 {
+        font-size: 14px;
+    }
+
+    .pedido-card p {
+        font-size: 12px;
+    }
+
+    .select-estado {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .btn-cancelar-pedido {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
 }
