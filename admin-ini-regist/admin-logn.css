@@ -127,6 +127,7 @@ body::before {
 }
 /* Input de recuperar contraseña */
 .container-form a{
+    border: 2px solid red;
     color: rgb(255, 255, 255);
     font-size: 14px;
     margin-bottom: 20px;
