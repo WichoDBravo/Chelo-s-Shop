@@ -125,6 +125,7 @@ ion-icon {
 }
 
 .container-input input{
+    color: green;
     border: none;
     outline: none;
     width: 100%;
