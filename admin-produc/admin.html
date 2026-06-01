@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+    <link rel="stylesheet" href="/admin-produc/admin.css">
+    <link rel="icon" type="image/png" href="/images/car.svg">
+</head>
+<body>
+
+    <header class="header">
+        <div class="menu container">
+                <a href="/Gestion-Inventario/index.html" class="logo">Chelo´s</a>
+                <input type="checkbox" id="menu">
+                <label for="menu">
+                    <img src="/images/menu.png" class="menu-icono" alt="">
+                </label>
+                <nav class="navbar">
+                    <ul>
+                        <li><a href="/admin-produc/pedidos.html">Pedidos</a></li>
+                        <li><a href="/index.html">Inicio</a></li>
+                        <li id="admin-auth-container"></li>
+                    </ul>
+                </nav>
+        </div>
+    </header>
+
+    <!-- Panel de Administración -->
+<div class="admin-panel">
+    <div class="admin-form-container">
+        <h2>📦 Gestión de Productos</h2>
+
+        <!-- Formulario para agregar/editar -->
+        <div class="form-agregar">
+            <input type="text" id="productoId" placeholder="ID (Automático)" readonly style="display: none;">
+            <input type="text" id="nombre" placeholder="Nombre del producto" required>
+            <input type="text" id="marca" placeholder="Marca" required>
+            <input type="number" id="precio" placeholder="Precio" step="0.01" required>
+            <input type="number" id="stock" placeholder="Stock" required>
+            <input type="text" id="imagenURL" placeholder="URL de la imagen">
+            <div id="vistaPrevia" style="display: none; margin-top: 10px;">
+                <img id="previewImg" style="max-width: 100px; border-radius: 8px;">
+            </div>
+            
+            <!-- FILA DE BOTONES + BUSCADOR -->
+            <div class="form-actions">
+                <div class="action-buttons">
+                    <button id="btnGuardar" class="btn-guardar">➕ Agregar Producto</button>
+                </div>
+                <div class="action-buscador">
+                    <input type="text" id="buscadorProductosAdmin" placeholder="🔍 Buscar productos...">
+                    <div id="resultadosBusquedaAdmin" class="resultados-busqueda"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de productos -->
+        <div class="productos-admin-grid" id="listaProductosAdmin">
+            <div class="loading">Cargando productos...</div>
+        </div>
+    </div>
+</div>
+
+    <script type="module" src="/admin-produc/admin.js"></script>
+    <script src="/transicion.js"></script>
+
+    <script>
+        // ============================================
+        // CONTROL DE SESIÓN DE ADMINISTRADOR
+        // ============================================
+        
+        // Función para mostrar mensaje de bienvenida (toast)
+        function mostrarMensajeAdmin(mensaje, esError = false) {
+            const toast = document.createElement('div');
+            toast.textContent = mensaje;
+            toast.style.position = 'fixed';
+            toast.style.top = '100px';
+            toast.style.right = '20px';
+            toast.style.backgroundColor = esError ? '#dc2626' : '#4CAF50';
+            toast.style.color = 'white';
+            toast.style.padding = '15px 20px';
+            toast.style.borderRadius = '5px';
+            toast.style.zIndex = '9999';
+            toast.style.fontWeight = 'bold';
+            toast.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        // Función para proteger el panel (redirigir si no está logueado)
+        function protegerPanelAdmin() {
+            const adminLogueado = localStorage.getItem('adminLogueado');
+            if (adminLogueado !== 'true') {
+                console.log('Acceso denegado: No eres administrador');
+                window.location.href = '/admin-ini-regist/admin-logn.html';
+            }
+        }
+        
+        // Función para actualizar el botón según estado de sesión de admin
+        function actualizarBotonAdmin() {
+            const authContainer = document.getElementById('admin-auth-container');
+            if (!authContainer) {
+                console.error('No se encontró el contenedor admin-auth-container');
+                return;
+            }
+            
+            // Obtener datos del localStorage
+            const adminLogueado = localStorage.getItem('adminLogueado');
+            const adminNombre = localStorage.getItem('adminNombre');
+            const adminRol = localStorage.getItem('adminRol');
+            
+            console.log('Estado admin:', adminLogueado);
+            
+            if (adminLogueado === 'true') {
+                // Admin logueado: mostrar nombre y botón cerrar sesión
+                authContainer.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="color: #ff9000; font-size: 14px;">👑 ${adminNombre || 'Admin'} ${adminRol === 'super_admin' ? '⭐' : ''}</span>
+                        <a href="#" id="cerrar-sesion-admin-btn" style="background: #dc2626; padding: 8px 18px; border-radius: 40px; color: white; text-decoration: none; font-size: 13px;">Cerrar Sesión</a>
+                    </div>
+                `;
+                
+                const cerrarBtn = document.getElementById('cerrar-sesion-admin-btn');
+                if (cerrarBtn) {
+                    cerrarBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        localStorage.removeItem('adminLogueado');
+                        localStorage.removeItem('adminNombre');
+                        localStorage.removeItem('adminEmail');
+                        localStorage.removeItem('adminUID');
+                        localStorage.removeItem('adminRol');
+                        mostrarMensajeAdmin('👑 Sesión de administrador cerrada correctamente');
+                        setTimeout(() => {
+                            window.location.href = '/admin-ini-regist/admin-logn.html';
+                        }, 1000);
+                    });
+                }
+            } else {
+                // Admin no logueado: mostrar botón de iniciar sesión
+                authContainer.innerHTML = `<a href="/admin-ini-regist/admin-logn.html" style="background: #dc2626; padding: 8px 20px; border-radius: 25px; color: white; text-decoration: none; font-size: 13px;">👑 Admin</a>`;
+            }
+        }
+        
+        // Función para mostrar bienvenida al cargar
+        function verificarSesionAdminAlCargar() {
+            const adminLogueado = localStorage.getItem('adminLogueado');
+            const adminNombre = localStorage.getItem('adminNombre');
+            
+            if (adminLogueado === 'true' && adminNombre) {
+                mostrarMensajeAdmin(`👑 ¡Bienvenido Administrador ${adminNombre}!`);
+            }
+        }
+        
+        // EJECUTAR PROTECCIÓN INMEDIATAMENTE
+        protegerPanelAdmin();
+        
+        // EJECUTAR CUANDO EL DOM ESTÉ LISTO
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                actualizarBotonAdmin();
+                verificarSesionAdminAlCargar();
+            });
+        } else {
+            actualizarBotonAdmin();
+            verificarSesionAdminAlCargar();
+        }
+    </script>
+</body>
+</html>

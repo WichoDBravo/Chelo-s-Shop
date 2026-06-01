@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Administrador</title>
+    <link rel="stylesheet" href="/admin-ini-regist/admin-logn.css">
+    <link rel="icon" type="image/png" href="/images/car.svg">
+</head>
+<body>
+
+    <a href="/index.html" class="back-home">Volver Al Inicio</a>
+    <div class="container">
+        <div class="container-form">
+            <form class="sign-in">
+                <h2>Admin - Inicia Sesión</h2>
+                <div class="social-networks">
+                    <ion-icon name="logo-google"></ion-icon>
+                    <ion-icon name="logo-facebook"></ion-icon>
+                    <ion-icon name="logo-instagram"></ion-icon>
+                </div>
+                <span>Use Su Correo Administrador Y Contraseña</span>
+
+                <div class="container-input">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="text" placeholder="Email Administrador" id="login-email">
+                </div>
+
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" placeholder="Contraseña" id="login-password">
+                </div>
+
+                <div class="container-input">
+                    <ion-icon name="key-outline"></ion-icon>
+                    <input type="password" placeholder="Código de Administrador" id="login-admin-code">
+                </div>
+
+                <a href="#">¿Olvidaste Tu Contraseña?</a>
+                <button type="button" class="button" id="btn-login">INICIAR SESIÓN</button>
+                <div id="login-error" style="color: red; font-size: 12px; margin-top: 10px; display: none;"></div>
+            </form>
+        </div>
+
+        <div class="container-form">
+            <form class="sign-up">
+                <h2>Admin - Registrate</h2>
+                <div class="social-networks">
+                    <ion-icon name="logo-google"></ion-icon>
+                    <ion-icon name="logo-facebook"></ion-icon>
+                    <ion-icon name="logo-instagram"></ion-icon>
+                </div>
+                <span>Use Su Correo Electronico Para Registrarse Como Administrador</span>
+                
+                <div class="container-input">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <input type="text" placeholder="Nombre Completo" id="register-name">
+                </div>
+                
+                <div class="container-input">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="text" placeholder="Email" id="register-email">
+                </div>
+                
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" placeholder="Contraseña" id="register-password">
+                </div>
+                
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" placeholder="Confirmar Contraseña" id="register-confirm-password">
+                </div>
+                
+                <div class="container-input">
+                    <ion-icon name="key-outline"></ion-icon>
+                    <input type="password" placeholder="Código de Registro Admin" id="register-admin-code">
+                </div>
+                
+                <button type="button" class="button" id="btn-register">REGISTRARSE COMO ADMIN</button>
+                <div id="register-error" style="color: red; font-size: 12px; margin-top: 10px; display: none;"></div>
+            </form>
+        </div>
+
+        <div class="container-welcome">
+            <div class="welcome-sign-up welcome">
+                <h3>¡Bienvenido Administrador!</h3>
+                <p>Ingrese Sus Datos Para Acceder Al Panel De Control</p>
+                <button class="button" id="btn-sign-up">Registrarse</button>
+            </div>
+            <div class="welcome-sign-in welcome">
+                <h3>¡Hola Admin!</h3>
+                <p>Acceda Al Panel De Administración Para Gestionar El Sistema</p>
+                <button class="button" id="btn-sign-in">Iniciar Sesión</button>
+            </div>
+        </div>            
+    </div>
+
+    <!-- IONICONS -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <SCRipt src="/admin-ini-regist/admin-logn.js"></SCRipt>
+    
+    <!-- FIREBASE SCRIPT -->
+    <script type="module">
+        // ============================================
+        // CONFIGURACIÓN DE FIREBASE (REEMPLAZA CON TUS DATOS)
+        // ============================================
+        const firebaseConfig = {
+        apiKey: "AIzaSyDE93o5qd45mX98N2OIK1VmoMiLYpmjHkw",
+        authDomain: "cheloshop-b09.firebaseapp.com",
+        databaseURL: "https://cheloshop-b09-default-rtdb.firebaseio.com",
+        projectId: "cheloshop-b09",
+        storageBucket: "cheloshop-b09.firebasestorage.app",
+        messagingSenderId: "350042741633",
+        appId: "1:350042741633:web:3f0125638c65333f5e2680",
+        measurementId: "G-XGDGHR2VWD"
+        };
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Inicializar
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // ============================================
+        // CÓDIGOS SECRETOS DE ADMIN
+        // ============================================
+        const SECRET_ADMIN_REGISTER_CODE = "ADMINREG4444";  // Código para registrar nuevos admins
+        const SECRET_ADMIN_LOGIN_CODE = "ADMIN4444";       // Código para login de admin
+
+        // ============================================
+        // FUNCIÓN DE REGISTRO DE ADMINISTRADOR
+        // ============================================
+        const btnRegister = document.getElementById("btn-register");
+        const registerName = document.getElementById("register-name");
+        const registerEmail = document.getElementById("register-email");
+        const registerPassword = document.getElementById("register-password");
+        const registerConfirmPassword = document.getElementById("register-confirm-password");
+        const registerAdminCode = document.getElementById("register-admin-code");
+        const registerError = document.getElementById("register-error");
+
+        async function registrarAdmin(email, password, nombre, adminCode) {
+            try {
+                // Verificar código secreto de registro
+                if (adminCode !== SECRET_ADMIN_REGISTER_CODE) {
+                    throw new Error("CÓDIGO_INCORRECTO");
+                }
+
+                // Crear usuario en Firebase Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Guardar datos del administrador en Realtime Database
+                await set(ref(db, 'admins/' + user.uid), {
+                    nombre: nombre,
+                    email: email,
+                    esAdmin: true,
+                    codigoAdmin: adminCode,
+                    fechaRegistro: new Date().toISOString(),
+                    rol: "super_admin"
+                });
+                
+                // También guardar en nodo general de usuarios
+                await set(ref(db, 'usuarios/' + user.uid), {
+                    nombre: nombre,
+                    email: email,
+                    esAdmin: true,
+                    fechaRegistro: new Date().toISOString()
+                });
+                
+                // Guardar en localStorage para tu sistema actual
+                localStorage.setItem("adminLogueado", "true");
+                localStorage.setItem("adminNombre", nombre);
+                localStorage.setItem("adminEmail", email);
+                localStorage.setItem("adminUID", user.uid);
+                localStorage.setItem("adminRol", "super_admin");
+                
+                alert("✅ ¡Registro de Administrador exitoso! Bienvenido " + nombre);
+                window.location.href = "/admin-produc/admin.html";
+                
+            } catch (error) {
+                let mensajeError = "";
+                switch (error.message) {
+                    case "CÓDIGO_INCORRECTO":
+                        mensajeError = "❌ Código de registro de administrador incorrecto";
+                        break;
+                    case 'auth/email-already-in-use':
+                        mensajeError = "❌ Este correo ya está registrado";
+                        break;
+                    case 'auth/invalid-email':
+                        mensajeError = "❌ Correo electrónico inválido";
+                        break;
+                    case 'auth/weak-password':
+                        mensajeError = "❌ La contraseña debe tener al menos 6 caracteres";
+                        break;
+                    default:
+                        mensajeError = "❌ Error: " + error.message;
+                }
+                registerError.textContent = mensajeError;
+                registerError.style.display = "block";
+                console.error(error);
+            }
+        }
+
+        // ============================================
+        // FUNCIÓN DE LOGIN DE ADMINISTRADOR
+        // ============================================
+        const btnLogin = document.getElementById("btn-login");
+        const loginEmail = document.getElementById("login-email");
+        const loginPassword = document.getElementById("login-password");
+        const loginAdminCode = document.getElementById("login-admin-code");
+        const loginError = document.getElementById("login-error");
+
+        async function iniciarSesionAdmin(email, password, adminCode) {
+            try {
+                // Primero autenticar con Firebase
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Verificar en la base de datos si el usuario es administrador
+                const adminRef = ref(db, 'admins/' + user.uid);
+                const snapshot = await get(adminRef);
+                
+                if (!snapshot.exists()) {
+                    throw new Error("NO_ADMIN");
+                }
+                
+                const adminData = snapshot.val();
+                
+                // Verificar que sea administrador y el código coincida
+                if (!adminData.esAdmin) {
+                    throw new Error("NO_ADMIN");
+                }
+                
+                if (adminData.codigoAdmin !== adminCode && adminCode !== SECRET_ADMIN_LOGIN_CODE) {
+                    throw new Error("CODIGO_INCORRECTO");
+                }
+                
+                // Guardar en localStorage
+                localStorage.setItem("adminLogueado", "true");
+                localStorage.setItem("adminNombre", adminData.nombre);
+                localStorage.setItem("adminEmail", email);
+                localStorage.setItem("adminUID", user.uid);
+                localStorage.setItem("adminRol", adminData.rol || "admin");
+                
+                alert("✅ ¡Bienvenido Administrador " + adminData.nombre + "!");
+                window.location.href = '/admin-produc/admin.html';
+                
+            } catch (error) {
+                let mensajeError = "";
+                switch (error.message) {
+                    case "NO_ADMIN":
+                        mensajeError = "❌ Este usuario no tiene permisos de administrador";
+                        break;
+                    case "CODIGO_INCORRECTO":
+                        mensajeError = "❌ Código de administrador incorrecto";
+                        break;
+                    case 'auth/user-not-found':
+                        mensajeError = "❌ Usuario no encontrado";
+                        break;
+                    case 'auth/wrong-password':
+                        mensajeError = "❌ Contraseña incorrecta";
+                        break;
+                    default:
+                        mensajeError = "❌ Error, Administrador no existe"
+                }
+                loginError.textContent = mensajeError;
+                loginError.style.display = "block";
+                console.error(error);
+            }
+        }
+
+        // ============================================
+        // VALIDACIONES
+        // ============================================
+        function validarLoginAdmin() {
+            let esValido = true;
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+            const adminCode = loginAdminCode.value.trim();
+            
+            if (email === "") {
+                mostrarError(loginEmail, "❌ El correo electrónico es obligatorio");
+                esValido = false;
+            } else if (!email.includes("@") || !email.includes(".")) {
+                mostrarError(loginEmail, "❌ Ingrese un correo electrónico válido");
+                esValido = false;
+            } else {
+                mostrarExito(loginEmail);
+            }
+            
+            if (password === "") {
+                mostrarError(loginPassword, "❌ La contraseña es obligatoria");
+                esValido = false;
+            } else if (password.length < 6) {
+                mostrarError(loginPassword, "❌ La contraseña debe tener al menos 6 caracteres");
+                esValido = false;
+            } else {
+                mostrarExito(loginPassword);
+            }
+            
+            if (adminCode === "") {
+                mostrarError(loginAdminCode, "❌ El código de administrador es obligatorio");
+                esValido = false;
+            } else if (adminCode.length < 4) {
+                mostrarError(loginAdminCode, "❌ El código debe tener al menos 4 caracteres");
+                esValido = false;
+            } else {
+                mostrarExito(loginAdminCode);
+            }
+            
+            return esValido;
+        }
+        
+        function validarRegistroAdmin() {
+            let esValido = true;
+            const nombre = registerName.value.trim();
+            const email = registerEmail.value.trim();
+            const password = registerPassword.value.trim();
+            const confirmPassword = registerConfirmPassword.value.trim();
+            const adminCode = registerAdminCode.value.trim();
+            
+            if (nombre === "") {
+                mostrarError(registerName, "❌ El nombre es obligatorio");
+                esValido = false;
+            } else if (nombre.length < 3) {
+                mostrarError(registerName, "❌ El nombre debe tener al menos 3 caracteres");
+                esValido = false;
+            } else {
+                mostrarExito(registerName);
+            }
+            
+            if (email === "") {
+                mostrarError(registerEmail, "❌ El correo electrónico es obligatorio");
+                esValido = false;
+            } else if (!email.includes("@") || !email.includes(".")) {
+                mostrarError(registerEmail, "❌ Ingrese un correo electrónico válido");
+                esValido = false;
+            } else {
+                mostrarExito(registerEmail);
+            }
+            
+            if (password === "") {
+                mostrarError(registerPassword, "❌ La contraseña es obligatoria");
+                esValido = false;
+            } else if (password.length < 6) {
+                mostrarError(registerPassword, "❌ La contraseña debe tener al menos 6 caracteres");
+                esValido = false;
+            } else {
+                mostrarExito(registerPassword);
+            }
+            
+            if (confirmPassword === "") {
+                mostrarError(registerConfirmPassword, "❌ Confirme su contraseña");
+                esValido = false;
+            } else if (confirmPassword !== password) {
+                mostrarError(registerConfirmPassword, "❌ Las contraseñas no coinciden");
+                esValido = false;
+            } else {
+                mostrarExito(registerConfirmPassword);
+            }
+            
+            if (adminCode === "") {
+                mostrarError(registerAdminCode, "❌ El código de registro es obligatorio");
+                esValido = false;
+            } else if (adminCode.length < 4) {
+                mostrarError(registerAdminCode, "❌ El código debe tener al menos 4 caracteres");
+                esValido = false;
+            } else {
+                mostrarExito(registerAdminCode);
+            }
+            
+            return esValido;
+        }
+        
+        // Funciones de utilidad
+        function mostrarError(input, mensaje) {
+            const formGroup = input.parentElement;
+            // Eliminar error anterior si existe
+            const errorAnterior = formGroup.querySelector(".error-message");
+            if (errorAnterior) errorAnterior.remove();
+            
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "error-message";
+            errorDiv.innerText = mensaje;
+            formGroup.appendChild(errorDiv);
+            input.classList.add("input-error");
+        }
+        
+        function mostrarExito(input) {
+            input.classList.add("input-success");
+        }
+        
+        function eliminarMensajesError() {
+            const errores = document.querySelectorAll(".error-message");
+            errores.forEach(error => error.remove());
+        }
+        
+        function eliminarClasesError() {
+            const inputs = document.querySelectorAll("input");
+            inputs.forEach(input => {
+                input.classList.remove("input-error", "input-success");
+            });
+        }
+        
+        function limpiarFormularios() {
+            const inputs = document.querySelectorAll("input");
+            inputs.forEach(input => {
+                input.value = "";
+            });
+            eliminarMensajesError();
+            eliminarClasesError();
+            loginError.style.display = "none";
+            registerError.style.display = "none";
+        }
+
+        
+        // ============================================
+        // EVENTOS DE LOS BOTONES
+        // ============================================
+        btnRegister.addEventListener("click", function(e) {
+            e.preventDefault();
+            eliminarMensajesError();
+            eliminarClasesError();
+            registerError.style.display = "none";
+            
+            if (validarRegistroAdmin()) {
+                registrarAdmin(
+                    registerEmail.value.trim(),
+                    registerPassword.value.trim(),
+                    registerName.value.trim(),
+                    registerAdminCode.value.trim()
+                );
+            }
+        });
+        
+        btnLogin.addEventListener("click", function(e) {
+            e.preventDefault();
+            eliminarMensajesError();
+            eliminarClasesError();
+            loginError.style.display = "none";
+            
+            if (validarLoginAdmin()) {
+                iniciarSesionAdmin(
+                    loginEmail.value.trim(),
+                    loginPassword.value.trim(),
+                    loginAdminCode.value.trim()
+                );
+            }
+        });
+        
+        // ============================================
+        // VERIFICAR SESIÓN ACTIVA
+        // ============================================
+        async function verificarSesionAdmin() {
+            const adminLogueado = localStorage.getItem("adminLogueado");
+            const adminUID = localStorage.getItem("adminUID");
+            
+            if (adminLogueado === "true" && adminUID) {
+                // Verificar en Firebase que el admin aún existe
+                try {
+                    const adminRef = ref(db, 'admins/' + adminUID);
+                    const snapshot = await get(adminRef);
+                    if (snapshot.exists() && snapshot.val().esAdmin === true) {
+                        console.log("✅ Sesión de administrador válida");
+                        // Redirigir automáticamente (bloqueado por ahora)
+                        // window.location.href = "/admin-ini-regist/admin-logn.html";
+                    }
+                } catch (error) {
+                    console.log("Error verificando sesión:", error);
+                }
+            }
+        }
+
+// ============================================
+// ACTIVAR ENTER PARA LOGIN Y REGISTRO
+// ============================================
+        const loginInputs = [loginEmail, loginPassword, loginAdminCode];
+        loginInputs.forEach(input => {
+            if (input) {
+                input.addEventListener("keypress",  function(e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        btnLogin.click()
+                    }
+                })
+            }
+        })
+
+        const registerInputs = [registerName, registerEmail, registerPassword, registerConfirmPassword, registerAdminCode];
+registerInputs.forEach(input => {
+    if (input) {
+        input.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnRegister.click();
+            }
+        });
+    }
+});
+        
+        verificarSesionAdmin();
+        console.log("✅ Firebase Admin conectado");
+    </script>
+    <script src="/transicion.js"></script>
+</body>
+</html>

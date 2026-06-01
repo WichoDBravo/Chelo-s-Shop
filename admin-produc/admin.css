@@ -1,0 +1,703 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* === FONDO NEÓN MODERNO === */
+    background: radial-gradient(circle at 20% 30%, #0f172a 0%, #020617 40%, #000 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+body {
+    opacity: 0;
+    animation: fadeIn 0.01s ease-in 0.4s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(29, 87, 248, 0.25), transparent 70%),
+                radial-gradient(circle at 20% 80%, rgba(29, 87, 248, 0.25), transparent 60%);
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    min-height: auto;
+    position: relative;
+    padding-top: 80px;
+}
+
+.menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    background-color: rgba(17, 24, 39, 0.85);
+    backdrop-filter: blur(16px);
+    padding: 8px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    max-width: 100%;
+}
+
+.logo {
+    font-size: 25px;
+    color: rgb(221, 83, 19);
+    text-transform: uppercase;
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(255, 144, 0, 0.5);
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+.menu .navbar ul li {
+    position: relative;
+    float: left;
+}
+
+.menu .navbar ul li a {
+    font-size: 18px;
+    padding: 20px;
+    font-weight: 600;
+    color: #e5e7eb;
+    display: block;
+    transition: 0.15s ease;
+    text-decoration: none;
+}
+
+.menu .navbar ul li a:hover {
+    transform: translateY(-2px);
+    color: #ff9000;
+    text-shadow: 0 0 8px rgba(231, 134, 6, 0.5);
+}
+
+
+.a {
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+    position: relative;
+    left: 250px;
+    padding: 8px 20px;
+    border-radius: 25px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+#menu {
+    display: none;
+}
+
+.menu-icono {
+    width: 25px;
+}
+
+.menu label {
+    cursor: pointer;
+    display: none;
+}
+
+th, td {
+    color: rgb(255, 255, 255);
+    padding: 8px;
+}
+
+.btn-3 {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 25px;
+    background: linear-gradient(90deg, #ff9000, #f8991d);
+    font-size: 14px;
+    color: white;
+    text-transform: capitalize;
+    box-shadow: 0 0 20px rgba(255, 144, 0, 0.4);
+    transition: 0.15s ease;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.btn-3:hover {
+    background: linear-gradient(90deg, #EF8700, #ff9000);
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(255, 144, 0, 0.6);
+}
+
+/* ============================================ */
+/* ESTILOS DEL PANEL DE ADMIN (CORREGIDOS) */
+/* ============================================ */
+
+/* Botones del formulario */
+.btn-guardar, .btn-cancelar {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-guardar {
+    background: linear-gradient(90deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-guardar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+}
+
+.btn-cancelar {
+    background: linear-gradient(90deg, #6b7280, #4b5563);
+    color: white;
+}
+
+.btn-cancelar:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #4b5563, #374151);
+}
+
+/* ==================== */
+/* Estilos para pedidos */
+/* ==================== */
+.pedidos-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pedido-card {
+    transition: all 0.3s ease;
+}
+
+.pedido-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.select-estado {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select-estado:hover {
+    transform: scale(1.02);
+}
+
+.btn-filtro {
+    padding: 10px 20px;
+    border-radius: 25px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-filtro:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    color: #e5e7eb;
+}
+
+th {
+    color: #ff9000;
+    font-weight: 600;
+}
+
+@media (max-width: 991px) {
+    .menu {
+        padding: 20px;
+    }
+    
+    .menu label {
+        display: initial;
+    }
+    
+    .menu .navbar {
+        padding: 25px 8px;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: rgba(17, 24, 39, 0.95);
+        backdrop-filter: blur(16px);
+        display: none;
+        border-radius: 8px;
+        margin-top: 8px;
+    }
+    
+    .menu .navbar ul li {
+        width: 100%;
+    }
+    
+    #menu:checked ~ .navbar {
+        display: initial;
+    }
+    
+    .submenu:hover #carrito {
+        min-width: 300px;
+        right: -100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 20px;
+    }
+    
+    .submenu:hover #carrito {
+        min-width: 280px;
+        right: -140px;
+    }
+    
+    table {
+        font-size: 12px;
+    }
+}
+
+/* Panel de admin */
+.admin-panel {
+    padding: 100px 20px 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.admin-form-container {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 25px;
+}
+
+.admin-form-container h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.form-agregar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-agregar input {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+.form-agregar input:focus {
+    outline: none;
+    border-color: #ff9000;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.form-agregar input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Grid de productos corregido */
+.productos-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+/* Tarjeta de producto (para admin) */
+.producto-card {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 144, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.producto-card img {
+    max-width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.producto-card h4 {
+    color: white;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.producto-card p {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.producto-card button {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.producto-card button:first-of-type {
+    background: #f44336;
+}
+
+.producto-card button:last-child {
+    background: #f44336;
+}
+
+.producto-card button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* ============================================ */
+/* 2 columnas */
+/* ============================================ */
+@media (max-width: 900px) {
+    .productos-admin-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+/* ============================================ */
+/* 1 columna (para moviles) */
+/* ============================================ */
+@media (max-width: 600px) {
+    .productos-admin-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+/* Mensajes de carga y error */
+.loading, .no-data, .error {
+    text-align: center;
+    padding: 40px;
+    color: white;
+    font-size: 16px;
+    grid-column: 1 / -1;
+}
+
+.loading {
+    color: #ff9000;
+}
+
+.error {
+    color: #ef4444;
+}
+
+.no-data {
+    color: #9ca3af;
+}
+
+/* ============================================ */
+/* FILA DE BOTONES + BUSCADOR */
+/* ============================================ */
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.action-buscador {
+    flex: 1;
+    max-width: 300px;
+}
+
+.action-buscador input {
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.action-buscador input:focus {
+    outline: none;
+    border-color: #ff9000;
+    box-shadow: 0 0 10px rgba(255, 144, 0, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.action-buscador input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.resultados-busqueda {
+    text-align: center;
+    margin-top: 6px;
+    font-size: 11px;
+    color: #ff9000;
+}
+
+/* ============================================ */
+/* TARJETAS DE PRODUCTOS - ESTILO ORIGINAL */
+/* ============================================ */
+
+.productos-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.producto-card {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 144, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.producto-card img {
+    max-width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.producto-card h4 {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 10px 0;
+}
+
+.producto-card p {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.producto-card .precio {
+    color: #ff9000;
+    font-weight: 500;
+}
+
+.producto-card .stock {
+    color: #10b981;
+}
+
+.producto-card .marca {
+    color: #9ca3af;
+}
+
+.producto-card button {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    margin-top: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.producto-card button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* Ocultar productos al buscar */
+.producto-card.oculto,
+.producto-card[style*="display: none"] {
+    display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .productos-admin-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .action-buttons {
+        justify-content: center;
+    }
+    
+    .action-buscador {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .productos-admin-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-guardar, .btn-cancelar {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ============================================ */
+/* BOTONES DE EDICIÓN Y ELIMINACIÓN */
+/* ============================================ */
+
+.producto-botones {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-editar {
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+}
+
+.btn-eliminar {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+}
+
+.btn-editar:hover {
+    background: #e68900;
+    transform: translateY(-2px);
+}
+
+.btn-eliminar:hover {
+    background: #d32f2f;
+    transform: translateY(-2px);
+}
+
+/* Botón cancelar pedido */
+.btn-cancelar-pedido {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.btn-cancelar-pedido:hover {
+    background: #dc2626;
+    transform: scale(1.02);
+}

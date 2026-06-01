@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador - Pedidos</title>
+    <link rel="stylesheet" href="/admin-produc/admin.css">
+    <link rel="icon" type="image/png" href="/images/car.svg">
+</head>
+<body>
+    <header class="header">
+        <div class="menu container">
+            <a href="/index.html" class="logo">Chelo´s</a>
+            <input type="checkbox" id="menu">
+            <label for="menu">
+                <img src="/images/menu.png" class="menu-icono" alt="">
+            </label>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="/admin-produc/admin.html">Productos</a></li>
+                    <li><a href="/index.html">Inicio</a></li>
+                    <li id="admin-auth-container"></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="admin-panel">
+        <div class="admin-form-container">
+            <h2>📋 Gestión de Pedidos</h2>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button id="btnFiltrarTodos" style="background:#6b7280; padding:10px 20px; border-radius:25px; border:none; color:white; cursor:pointer;">Todos</button>
+                <button id="btnFiltrarPendientes" style="background:#ff9000; padding:10px 20px; border-radius:25px; border:none; color:white; cursor:pointer;">Pendientes</button>
+                <button id="btnFiltrarCompletados" style="background:#10b981; padding:10px 20px; border-radius:25px; border:none; color:white; cursor:pointer;">Completados</button>
+            </div>
+            
+            <div id="listaPedidos">
+                <div class="loading">Cargando pedidos...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/admin-produc/pedidos.js"></script>
+</body>
+</html>

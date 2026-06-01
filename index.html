@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bodeguita del 9</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/png" href="/images/car.svg">
+</head>
+<body>
+
+    <header class="header">
+        <div class="menu container">
+            <a href="/admin-produc/admin.html" class="logo">Chelo´s</a>
+            <input type="checkbox" id="menu">
+            <label for="menu">
+                <img src="images/menu.png" class="menu-icono" alt="">
+            </label>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="/productos/productos.html">Productos 🛒</a></li>
+                    <li id="auth-button-container">
+                        <!-- carga dinámica del botón correspondiente -->
+                    </li>
+                </ul>
+            </nav>
+            <div>
+                <li class="submenu" id="submenu-carrito"></li>
+            </div>
+        </div>
+        <div class="header-content container">
+            <div class="header-txt">
+                <h1> <span>Bienvenido,</span> pide lo que quieras.</h1>
+                <p>
+                    Chelo's es una plataforma diseñada para hacer tu experiencia de compra más rápida, clara y cómoda. 
+                    Aquí puedes consultar el catálogo completo de productos, ver los precios actualizados y conocer 
+                    el stock disponible en tiempo real. ¿Necesitas algo? Solo regístrate, agrega productos a tu carrito 
+                    y realiza tu pedido en pocos pasos. Simplificamos la gestión de la tienda para que tú disfrutes 
+                    de un servicio más ágil y confiable.
+                </p>
+                <a href="/mas-informacion.html" class="btn-1">Más Información</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="app container">
+        <div class="app-txt">
+            <h2>Descarga La App</h2>
+            <div class="descarga">
+                <img src="images/store1.png" alt="">
+                <img src="images/store2.png" alt="">
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content container">
+            <div class="link">
+                <h3>Redes Sociales Soporte</h3>
+                <ul>
+                    <li>
+                        <ion-icon name="logo-twitter"></ion-icon>
+                        <a href="https://x.com/WichoVLarga" target="_blank">X (Twitter)</a>
+                    </li>
+                    <li>
+                        <ion-icon name="logo-instagram"></ion-icon>
+                        <a href="https://www.instagram.com/wicho_d_bravo/" target="_blank">Instagram</a>
+                    </li>
+                    <li>
+                        <ion-icon name="logo-facebook"></ion-icon>
+                        <a href="https://www.facebook.com/wicho.bravo.9083?locale=es_LA" target="_blank">Facebook</a>
+                    </li>
+                    <li>
+                        <ion-icon name="logo-tiktok"></ion-icon>
+                        <a href="https://www.tiktok.com/@wichov_larga" target="_blank">TikTok</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Contáctanos</h3>
+                <ul>
+                    <li>
+                        <ion-icon name="logo-whatsapp"></ion-icon>
+                        <a href="https://wa.me/584220839239" target="_blank">Escríbenos por WhatsApp</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="link">
+                <h3>Disponible Próximamente Para:</h3>
+                <div class="descarga">
+                    <img src="images/store1.png" alt="App Store">
+                    <img src="images/store2.png" alt="Google Play">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="/script.js"></script>
+    <script src="/transicion.js"></script>
+</body>
+</html>

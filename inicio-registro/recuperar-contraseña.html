@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="/inicio-registro/style-reg-ini.css">
+    <link rel="icon" type="image/png" href="/images/car.svg">
+</head>
+<body>
+
+    <a href="/inicio-registro/registro-inicio.html" class="back-home"> Volver al Login</a>
+    
+    <div class="container">
+        <div class="container-form" style="max-width: 500px; margin: 0 auto;">
+            <form class="sign-in" id="form-recuperar">
+                <h2>🔐 Recuperar Contraseña</h2>
+                
+                <span>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</span>
+
+                <div class="container-input">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="email" id="reset-email" placeholder="Correo electrónico" required>
+                </div>
+
+                <button type="button" class="button" id="btn-recuperar">📧 ENVIAR CORREO</button>
+                
+                <div id="reset-mensaje" style="color: white; font-size: 13px; margin-top: 15px; text-align: center; padding: 10px; border-radius: 8px; display: none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- IONICONS -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <script type="module">
+        // ============================================
+        // CONFIGURACIÓN DE FIREBASE
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDE93o5qd45mX98N2OIK1VmoMiLYpmjHkw",
+            authDomain: "cheloshop-b09.firebaseapp.com",
+            databaseURL: "https://cheloshop-b09-default-rtdb.firebaseio.com",
+            projectId: "cheloshop-b09",
+            storageBucket: "cheloshop-b09.firebasestorage.app",
+            messagingSenderId: "350042741633",
+            appId: "1:350042741633:web:3f0125638c65333f5e2680",
+            measurementId: "G-XGDGHR2VWD"
+        };
+
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // ============================================
+        // FUNCIÓN PARA ENVIAR CORREO DE RECUPERACIÓN
+        // ============================================
+        const btnRecuperar = document.getElementById("btn-recuperar");
+        const resetEmail = document.getElementById("reset-email");
+        const resetMensaje = document.getElementById("reset-mensaje");
+
+        async function recuperarContrasena(email) {
+            // Mostrar mensaje de carga
+            resetMensaje.style.display = "block";
+            resetMensaje.style.backgroundColor = "#3b82f6";
+            resetMensaje.innerHTML = "⏳ Enviando correo de recuperación...";
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                
+                // Éxito
+                resetMensaje.style.backgroundColor = "#10b981";
+                resetMensaje.innerHTML = "✅ ¡Correo enviado! Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.<br><br>📧 No olvides revisar la carpeta de SPAM si no lo encuentras.";
+                
+                // Limpiar campo
+                resetEmail.value = "";
+                
+                // Redirigir al login después de 5 segundos
+                setTimeout(() => {
+                    window.location.href = "/inicio-registro/registro-inicio.html";
+                }, 5000);
+                
+            } catch (error) {
+                console.error("Error al enviar correo:", error);
+                
+                let mensajeError = "";
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        mensajeError = "❌ No existe una cuenta con este correo electrónico";
+                        break;
+                    case 'auth/invalid-email':
+                        mensajeError = "❌ Correo electrónico inválido";
+                        break;
+                    case 'auth/too-many-requests':
+                        mensajeError = "❌ Demasiados intentos. Espera un momento e intenta de nuevo";
+                        break;
+                    default:
+                        mensajeError = "❌ Error: " + error.message;
+                }
+                
+                resetMensaje.style.backgroundColor = "#ef4444";
+                resetMensaje.innerHTML = mensajeError;
+            }
+        }
+
+        // ============================================
+        // VALIDACIÓN Y EVENTO DEL BOTÓN
+        // ============================================
+        function validarEmail() {
+            const email = resetEmail.value.trim();
+            
+            if (email === "") {
+                mostrarError(resetEmail, "❌ El correo electrónico es obligatorio");
+                return false;
+            }
+            if (!email.includes("@") || !email.includes(".")) {
+                mostrarError(resetEmail, "❌ Ingrese un correo electrónico válido");
+                return false;
+            }
+            mostrarExito(resetEmail);
+            return true;
+        }
+        
+        function mostrarError(input, mensaje) {
+            const formGroup = input.parentElement;
+            // Eliminar mensaje de error anterior si existe
+            const errorExistente = formGroup.querySelector(".error-message");
+            if (errorExistente) errorExistente.remove();
+            
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "error-message";
+            errorDiv.innerText = mensaje;
+            errorDiv.style.color = "#ef4444";
+            errorDiv.style.fontSize = "12px";
+            errorDiv.style.marginTop = "5px";
+            formGroup.appendChild(errorDiv);
+            input.classList.add("input-error");
+            input.classList.remove("input-success");
+        }
+        
+        function mostrarExito(input) {
+            // Eliminar mensaje de error
+            const formGroup = input.parentElement;
+            const errorExistente = formGroup.querySelector(".error-message");
+            if (errorExistente) errorExistente.remove();
+            
+            input.classList.remove("input-error");
+            input.classList.add("input-success");
+        }
+        
+        function eliminarMensajesError() {
+            const errores = document.querySelectorAll(".error-message");
+            errores.forEach(error => error.remove());
+            
+            const inputs = document.querySelectorAll("input");
+            inputs.forEach(input => {
+                input.classList.remove("input-error", "input-success");
+            });
+        }
+        
+        // Evento del botón
+        btnRecuperar.addEventListener("click", function(e) {
+            e.preventDefault();
+            eliminarMensajesError();
+            resetMensaje.style.display = "none";
+            
+            if (validarEmail()) {
+                recuperarContrasena(resetEmail.value.trim());
+            }
+        });
+        
+        // Evento Enter
+        resetEmail.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnRecuperar.click();
+            }
+        });
+        
+        console.log("✅ Sistema de recuperación de contraseña activado");
+    </script>
+</body>
+</html>
