@@ -326,6 +326,11 @@ ion-icon {
     transition: all 0.3s ease;
 }
 
+.divisor h2 {
+    text-align: center;
+    position: relative;
+}
+
 /* ============================================ */
 /* RESPONSIVE PARA MÓVIL */
 /* ============================================ */
