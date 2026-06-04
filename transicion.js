@@ -58,3 +58,40 @@
         }
     });
 })();
+
+// ============================================
+// USAR "REGRESAR" DEL NAVEGADOR
+// ============================================
+
+(function() {
+    // Forzar que el body sea visible inmediatamente
+    document.body.style.opacity = '1';
+    
+    // Escuchar el evento de páginashow (se dispara cuando la página se carga desde la caché)
+    window.addEventListener('pageshow', function(event) {
+        // Si la página viene de la caché (bfcache - back/forward cache)
+        if (event.persisted) {
+            console.log('Página restaurada desde caché, forzando visibilidad');
+            document.body.style.opacity = '1';
+            document.body.style.animation = 'none';
+            
+            // Forzar reflow para reiniciar la animación si es necesario
+            void document.body.offsetHeight;
+        }
+    });
+    
+    // También escuchar el evento de popstate (cuando se navega con flecha atrás/adelante)
+    window.addEventListener('popstate', function() {
+        console.log('Navegación con flecha atrás/adelante');
+        setTimeout(function() {
+            document.body.style.opacity = '1';
+            document.body.style.animation = 'none';
+        }, 10);
+    });
+    
+    // Escuchar el evento beforeunload para preparar la página antes de salir
+    window.addEventListener('beforeunload', function() {
+        document.body.style.opacity = '1';
+        document.body.style.animation = 'none';
+    });
+})();
