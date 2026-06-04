@@ -347,7 +347,7 @@ ion-icon {
         background: radial-gradient(circle at 20% 30%, #0f172a 0%, #020617 40%, #000 100%);
     }
 
-    /* Contenedor principal - se adapta al ancho del móvil */
+    /* Contenedor principal */
     .container {
         width: 100%;
         max-width: 400px;
@@ -356,12 +356,29 @@ ion-icon {
         flex-direction: column;
         border-radius: 20px;
         margin: 20px auto;
+        overflow: visible;
     }
 
-    /* Formularios - ocupan todo el ancho */
+    /* Wrapper de formularios para toggle vertical */
+    .forms-container {
+        width: 100%;
+        transition: transform 0.5s ease-in-out;
+    }
+    
+    /* Estado normal: formulario de Inicio visible */
+    .forms-container {
+        transform: translateY(0);
+    }
+    
+    /* Estado toggle: formulario de Registro visible */
+    .container.toggle .forms-container {
+        transform: translateY(-100%);
+    }
+    
+    /* Cada formulario ocupa el 100% del ancho */
     .container-form {
         width: 100%;
-        height: auto;
+        flex-shrink: 0;
         overflow: visible;
     }
 
@@ -459,51 +476,24 @@ ion-icon {
         max-height: 500px;
     }
 
-    /* ============================================ */
-    /* OCULTAR O MOSTRAR FORMULARIOS CON TOGGLE */
-    /* ============================================ */
-    
-    /* Ocultar el formulario de Registro por defecto */
-    .sign-up {
-        display: none;
-    }
-    
-    /* Mostrar el formulario de Registro cuando el contenedor tiene clase 'toggle' */
-    .container.toggle .sign-up {
-        display: flex;
-    }
-    
-    /* Ocultar el formulario de Inicio cuando el contenedor tiene clase 'toggle' */
-    .container.toggle .sign-in {
-        display: none;
-    }
-    
-    /* Mostrar el formulario de Inicio por defecto */
-    .sign-in {
-        display: flex;
-    }
-    
-    /* Welcome panels - ocultar el de Registro por defecto */
+    /* Welcome panels */
     .welcome-sign-up {
         display: none !important;
     }
     
-    /* Mostrar el welcome de Registro cuando hay toggle */
     .container.toggle .welcome-sign-up {
         display: flex !important;
     }
     
-    /* Ocultar el welcome de Inicio cuando hay toggle */
     .container.toggle .welcome-sign-in {
         display: none !important;
     }
     
-    /* Mostrar el welcome de Inicio por defecto */
     .welcome-sign-in {
         display: flex !important;
     }
 
-    /* Desactivar transformaciones que interfieran */
+    /* Desactivar transformaciones horizontales */
     .sign-up {
         transform: translateX(0);
     }
@@ -521,7 +511,7 @@ ion-icon {
     }
 
     .container.toggle .welcome-sign-in {
-        transform: translateX(-100%);
+        transform: translateX(0);
     }
 
     .container.toggle .welcome-sign-up {
