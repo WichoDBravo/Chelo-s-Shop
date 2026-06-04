@@ -358,7 +358,7 @@ th, td {
 }
 
 ion-icon {
-    color white !important;
+    color: white !important;
 }
 
 .link ul li ion-icon {
