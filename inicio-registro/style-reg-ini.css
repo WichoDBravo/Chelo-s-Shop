@@ -72,6 +72,7 @@ body::before {
 
 /* Contenido Inicio sesion */
 .container-form form{
+    color: white;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -307,21 +308,15 @@ body::before {
     color: #ef4444;
 }
 
-/* ============================================ */
-/* ICONOS EN BLANCO (escritorio y móvil) */
-/* ============================================ */
-
-/* Todos los iconos de Ionicons en blanco */
 ion-icon {
     color: white !important;
 }
 
-/* Iconos dentro de inputs (correo, candado, persona) */
+
 .container-input ion-icon {
     color: #ff9000 !important;  /* Para los iconos de input */
 }
 
-/* Iconos de redes sociales */
 .social-networks ion-icon {
     color: white !important;
 }
@@ -347,7 +342,7 @@ ion-icon {
         background: radial-gradient(circle at 20% 30%, #0f172a 0%, #020617 40%, #000 100%);
     }
 
-    /* Contenedor principal */
+    /* Contenedor principal - se adapta al ancho del móvil */
     .container {
         width: 100%;
         max-width: 400px;
@@ -356,29 +351,12 @@ ion-icon {
         flex-direction: column;
         border-radius: 20px;
         margin: 20px auto;
-        overflow: visible;
     }
 
-    /* Wrapper de formularios para toggle vertical */
-    .forms-container {
-        width: 100%;
-        transition: transform 0.5s ease-in-out;
-    }
-    
-    /* Estado normal: formulario de Inicio visible */
-    .forms-container {
-        transform: translateY(0);
-    }
-    
-    /* Estado toggle: formulario de Registro visible */
-    .container.toggle .forms-container {
-        transform: translateY(-100%);
-    }
-    
-    /* Cada formulario ocupa el 100% del ancho */
+    /* Formularios - ocupan todo el ancho */
     .container-form {
         width: 100%;
-        flex-shrink: 0;
+        height: auto;
         overflow: visible;
     }
 
@@ -422,8 +400,9 @@ ion-icon {
         width: 100%;
         height: auto;
         min-height: 180px;
-        transform: translateX(0);
+        transform: translateY(0);
         border-radius: 0 0 20px 20px;
+        display: none;
     }
 
     .container.toggle .container-welcome {
@@ -476,46 +455,73 @@ ion-icon {
         max-height: 500px;
     }
 
-    /* Welcome panels */
+    /* ============================================ */
+    /* OCULTAR O MOSTRAR FORMULARIOS CON TOGGLE */
+    /* ============================================ */
+    
+    /* Ocultar el formulario de Registro por defecto */
+    .sign-up {
+        display: none;
+    }
+    
+    /* Mostrar el formulario de Registro cuando el contenedor tiene clase 'toggle' */
+    .container.toggle .sign-up {
+        display: flex;
+    }
+    
+    /* Ocultar el formulario de Inicio cuando el contenedor tiene clase 'toggle' */
+    .container.toggle .sign-in {
+        display: none;
+    }
+    
+    /* Mostrar el formulario de Inicio por defecto */
+    .sign-in {
+        display: flex;
+    }
+    
+    /* Welcome panels - ocultar el de Registro por defecto */
     .welcome-sign-up {
         display: none !important;
     }
     
+    /* Mostrar el welcome de Registro cuando hay toggle */
     .container.toggle .welcome-sign-up {
         display: flex !important;
     }
     
+    /* Ocultar el welcome de Inicio cuando hay toggle */
     .container.toggle .welcome-sign-in {
         display: none !important;
     }
     
+    /* Mostrar el welcome de Inicio por defecto */
     .welcome-sign-in {
         display: flex !important;
     }
 
-    /* Desactivar transformaciones horizontales */
+    /* Desactivar transformaciones que interfieran */
     .sign-up {
-        transform: translateX(0);
+        transform: translateY(0);
     }
 
     .container.toggle .sign-in {
-        transform: translateX(0);
+        transform: translateY(0);
     }
 
     .container.toggle .sign-up {
-        transform: translateX(0);
+        transform: translateY(0);
     }
 
     .welcome-sign-in {
-        transform: translateX(0);
+        transform: translateY(0);
     }
 
     .container.toggle .welcome-sign-in {
-        transform: translateX(0);
+        transform: translateY(-100%);
     }
 
     .container.toggle .welcome-sign-up {
-        transform: translateX(0);
+        transform: translateY(0);
     }
 }
 
