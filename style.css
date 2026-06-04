@@ -357,6 +357,10 @@ th, td {
     margin-bottom: 8px;
 }
 
+ion-icon {
+    color white !important;
+}
+
 .link ul li ion-icon {
     font-size: 20px;
     width: 24px;
