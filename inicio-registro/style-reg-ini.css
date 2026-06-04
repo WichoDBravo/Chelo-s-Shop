@@ -21,7 +21,7 @@ body {
 }
 
 
-/* Fondo */ /* Fondo */ /* Fondo */
+/* Fondo */
 body{
     width: 100%;
     height: 100vh;
@@ -52,7 +52,7 @@ body::before {
     pointer-events: none;
 }
 
-/* Ventana De Datos */ /* Ventana De Datos */
+/* Ventana De Datos */
 .container{
     width: 800px;
     height: 500px;
@@ -64,13 +64,13 @@ body::before {
     box-shadow: 0 0 20px rgb 0, 0, 0, 0.3;
 }
 
-/* contenido de Inicio y Registro */ /* contenido de Inicio y Registro */
+/* contenido de Inicio y Registro */
 .container-form{
     width: 100%;
     overflow: hidden;
 }
 
-/* Contenido Inicio sesion */ /* Contenido Inicio sesion */
+/* Contenido Inicio sesion */
 .container-form form{
     height: 100%;
     display: flex;
@@ -104,7 +104,7 @@ body::before {
     margin-bottom: 15px;
 }
 
-/* datos */ /* datos */ /* datos */
+/* datos */
 .container-input{
     width: 300px;
     height: 40px;
@@ -133,7 +133,7 @@ body::before {
     margin-top: 5px;   
 }
 
-/* Volver al Inicio */ /* Volver al Inicio */ /* Volver al Inicio */
+/* Volver al Inicio */
 .back-home {
     position: fixed;
     top: 20px;
@@ -185,7 +185,7 @@ body::before {
     box-shadow: 0 0 30px rgba(255, 144, 0, 0.6);
 }
 
-/* Mensaje de Error */ /* Mensaje de Error */ /* Mensaje de Error */
+/* Mensaje de Error */
 .error-message {
     color: red;
     font-size: 12px;
@@ -203,7 +203,7 @@ body::before {
 }
 
 
-/* Efecto de Movimiento */ /* Efecto de Movimiento */ /* Efecto de Movimiento */
+/* Efecto de Movimiento */
 .sign-up{
     transform: translatex(-100%);
 }
@@ -306,6 +306,30 @@ body::before {
 }
 
 /* ============================================ */
+/* ICONOS EN BLANCO (escritorio y móvil) */
+/* ============================================ */
+
+/* Todos los iconos de Ionicons en blanco */
+ion-icon {
+    color: white !important;
+}
+
+/* Iconos dentro de inputs (correo, candado, persona) */
+.container-input ion-icon {
+    color: #ff9000 !important;  /* Para los iconos de input */
+}
+
+/* Iconos de redes sociales */
+.social-networks ion-icon {
+    color: white !important;
+}
+
+.social-networks ion-icon:hover {
+    color: #ff9000 !important;
+    transition: all 0.3s ease;
+}
+
+/* ============================================ */
 /* RESPONSIVE PARA MÓVIL */
 /* ============================================ */
 
@@ -313,14 +337,15 @@ body::before {
     /* Ajustes generales del body */
     body {
         padding: 15px;
+        padding-top: 60px;
         min-height: 100vh;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         background: radial-gradient(circle at 20% 30%, #0f172a 0%, #020617 40%, #000 100%);
     }
 
-    /* Contenedor principal adaptable al ancho del movil */
+    /* Contenedor principal - se adapta al ancho del móvil */
     .container {
         width: 100%;
         max-width: 400px;
@@ -328,7 +353,7 @@ body::before {
         min-height: auto;
         flex-direction: column;
         border-radius: 20px;
-        margin: 0 auto;
+        margin: 20px auto;
     }
 
     /* Formularios - ocupan todo el ancho */
@@ -372,7 +397,7 @@ body::before {
         font-size: 12px;
     }
 
-    /* Panel Welcome - se muestra debajo del formulario */
+    /* Panel Welcome */
     .container-welcome {
         position: relative;
         width: 100%;
@@ -414,9 +439,9 @@ body::before {
     .back-home {
         top: 10px;
         left: 10px;
-        padding: 6px 12px;
+        padding: 5px 10px;
         font-size: 11px;
-        z-index: 20;
+        z-index: 1001;
     }
 
     /* Iconos sociales */
@@ -433,7 +458,7 @@ body::before {
     }
 
     /* ============================================ */
-    /* OCULTAR/MOSTRAR FORMULARIOS CON TOGGLE */
+    /* OCULTAR O MOSTRAR FORMULARIOS CON TOGGLE */
     /* ============================================ */
     
     /* Ocultar el formulario de Registro por defecto */
