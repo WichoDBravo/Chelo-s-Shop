@@ -110,3 +110,71 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarBotonSesion();
     verificarSesionAlCargar();
 });
+
+// ============================================
+// CIERRE AUTOMÁTICO DEL MENÚ MÓVIL
+// ============================================
+
+function configurarCierreMenuMovil() {
+    const menuCheckbox = document.getElementById('menu');
+    const menuOverlay = document.querySelector('.menu-overlay');
+    const menuLinks = document.querySelectorAll('.navbar a, .navbar button, .btn-cerrar-sesion, .btn-iniciar-sesion');
+    let timeoutId = null;
+
+    if (!menuCheckbox) return;
+
+    // Función para cerrar el menú
+    function cerrarMenu() {
+        if (menuCheckbox.checked) {
+            menuCheckbox.checked = false;
+        }
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    }
+
+    // Cerrar menú después de 2 segundos si está abierto
+    function iniciarTemporizadorCierre() {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        if (menuCheckbox.checked) {
+            timeoutId = setTimeout(() => {
+                cerrarMenu();
+            }, 2000); // 2 segundos
+        }
+    }
+
+    // Detectar cuando se abre el menú
+    menuCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Si se abre, iniciar temporizador
+            iniciarTemporizadorCierre();
+        } else {
+            // Si se cierra, cancelar temporizador
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        }
+    });
+
+    // Cerrar menú al hacer clic en el overlay
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', cerrarMenu);
+    }
+
+    // Cerrar menú al hacer clic en cualquier enlace o botón del menú
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            // Pequeño retraso para permitir la navegación
+            setTimeout(() => {
+                cerrarMenu();
+            }, 100);
+        });
+    });
+}
+
+// Ejecutar la función cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    configurarCierreMenuMovil();
+});
