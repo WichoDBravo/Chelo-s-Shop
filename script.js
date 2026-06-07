@@ -22,17 +22,23 @@ function mostrarMensajeBienvenida(mensaje) {
 }
 
 // Función para actualizar el botón según estado de sesión
+// Función para actualizar el botón según estado de sesión
 function actualizarBotonSesion() {
     const authContainer = document.getElementById('auth-button-container');
     const usuarioLogueado = localStorage.getItem('usuarioLogueado');
-    const usuarioNombre = localStorage.getItem('usuarioNombre');
+    let usuarioNombre = localStorage.getItem('usuarioNombre');
     
     if (usuarioLogueado === 'true') {
-        // Usuario logueado: mostrar "Cerrar Sesión"
+        // Limitar nombre largo en escritorio
+        if (usuarioNombre && usuarioNombre.length > 18) {
+            usuarioNombre = usuarioNombre.substring(0, 16) + '...';
+        }
+        
+        // Usuario logueado: mostrar nombre y botón "Cerrar Sesión"
         authContainer.innerHTML = `
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <span style="position: relative;top: 10px; left: 30px; color: white; font-size: 20px;">Hola, ${usuarioNombre || 'Usuario'}</span>
-                <a href="/index.html" id="cerrar-sesion-btn" class="btn-cerrar-sesion">Cerrar Sesión</a>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="color: #ff9000; font-size: 14px; font-weight: 500; white-space: nowrap;">👤 Hola, ${usuarioNombre || 'Usuario'}</span>
+                <a href="#" id="cerrar-sesion-btn" class="btn-cerrar-sesion" style="background: linear-gradient(90deg, #dc2626, #ef4444); padding: 6px 18px; border-radius: 25px; color: white; text-decoration: none; font-size: 13px; transition: all 0.3s ease;">Cerrar Sesión</a>
             </div>
         `;
         
@@ -54,7 +60,7 @@ function actualizarBotonSesion() {
                 // Actualizar botón inmediatamente
                 actualizarBotonSesion();
                 
-                // Opcional: Recargar la página después de 1 segundo
+                // Recargar la página después de 1 segundo
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
@@ -63,11 +69,10 @@ function actualizarBotonSesion() {
     } else {
         // Usuario no logueado: mostrar "Iniciar Sesión"
         authContainer.innerHTML = `
-            <a href="/inicio-registro/registro-inicio.html" class="btn-iniciar-sesion">Iniciar Sesión</a>
+            <a href="/inicio-registro/registro-inicio.html" class="btn-iniciar-sesion" style="background: linear-gradient(90deg, #ff9000, #f8991d); padding: 6px 18px; border-radius: 25px; color: white; text-decoration: none; font-size: 13px; transition: all 0.3s ease;">Iniciar Sesión</a>
         `;
     }
 }
-
 // Verificar sesión al cargar la página y mostrar bienvenida si corresponde
 function verificarSesionAlCargar() {
     const usuarioLogueado = localStorage.getItem('usuarioLogueado');
