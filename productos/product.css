@@ -574,7 +574,7 @@ th, td {
     .submenu:hover #carrito {
         min-width: 300px;
         top: 30px;
-        right: 20px;
+        right: 200px;
     }
 }
 
