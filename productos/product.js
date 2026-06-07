@@ -271,7 +271,6 @@ function actualizarVistaCarrito() {
     const tbody = document.querySelector('#lista-carrito tbody');
     if (!tbody) return;
     
-    // Si no hay usuario logueado
     if (!auth?.currentUser) {
         tbody.innerHTML = `
             <tr>
@@ -289,7 +288,7 @@ function actualizarVistaCarrito() {
     tbody.innerHTML = '';
     
     if (carrito.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">🛒 Carrito vacío</td></tr>';
+        tbody.innerHTML = '<td><td colspan="5" style="text-align:center;">🛒 Carrito vacío</td</tr>';
         return;
     }
     
@@ -299,11 +298,11 @@ function actualizarVistaCarrito() {
         total += subtotal;
         tbody.innerHTML += `
             <tr>
-                <td>${item.nombre}</td>
-                <td>Bs.${item.precio}</td>
-                <td>${item.cantidad}</td>
-                <td>Bs.${subtotal}</td>
-                <td><button onclick="eliminarDelCarrito('${item.id}')" style="background:#f44336; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️</button></td>
+                <td data-label="Producto">${item.nombre}</td>
+                <td data-label="Precio">Bs.${item.precio}</td>
+                <td data-label="Cantidad">${item.cantidad}</td>
+                <td data-label="Subtotal">Bs.${subtotal}</td>
+                <td data-label="Acción"><button onclick="eliminarDelCarrito('${item.id}')">🗑️</button></td>
             </tr>
         `;
     });
@@ -315,7 +314,7 @@ function actualizarVistaCarrito() {
         </tr>
         <tr>
             <td colspan="5" style="text-align:center; padding-top:15px;">
-                <button onclick="hacerPedido()" style="background: linear-gradient(90deg, #10b981, #059669); color:white; border:none; padding:12px 24px; border-radius:25px; cursor:pointer; font-size:16px; font-weight:bold; width:100%;">
+                <button onclick="hacerPedido()" class="btn-hacer-pedido" style="background: linear-gradient(90deg, #10b981, #059669); color:white; border:none; padding:12px 24px; border-radius:25px; cursor:pointer; font-size:16px; font-weight:bold; width:100%;">
                     📦 HACER PEDIDO
                 </button>
             </td>
@@ -327,7 +326,6 @@ function actualizarContadorCarrito() {
     const contador = document.getElementById('contador-carrito');
     if (!contador) return;
 
-    // Si no hay usuario, no muestra el contador
     if (!auth?.currentUser) {
         contador.style.display = 'none';
         return;
@@ -384,10 +382,23 @@ function configurarCarritoDesplegable() {
         }, 2000);
     }
     
-    submenu.addEventListener('mouseenter', () => { isMouseOnSubmenu = true; mostrarCarrito(); });
-    submenu.addEventListener('mouseleave', () => { isMouseOnSubmenu = false; ocultarCarritoConDelay(); });
-    carritoDiv.addEventListener('mouseenter', () => { isMouseOnCarrito = true; if (timeoutId) clearTimeout(timeoutId); mostrarCarrito(); });
-    carritoDiv.addEventListener('mouseleave', () => { isMouseOnCarrito = false; ocultarCarritoConDelay(); });
+    submenu.addEventListener('mouseenter', () => { 
+        isMouseOnSubmenu = true; 
+        mostrarCarrito(); 
+    });
+    submenu.addEventListener('mouseleave', () => { 
+        isMouseOnSubmenu = false; 
+        ocultarCarritoConDelay(); 
+    });
+    carritoDiv.addEventListener('mouseenter', () => { 
+        isMouseOnCarrito = true; 
+        if (timeoutId) clearTimeout(timeoutId); 
+        mostrarCarrito(); 
+    });
+    carritoDiv.addEventListener('mouseleave', () => { 
+        isMouseOnCarrito = false; 
+        ocultarCarritoConDelay(); 
+    });
 }
 
 // ============================================
@@ -405,20 +416,73 @@ function verificarAutenticacion() {
         console.log("onAuthStateChanged - Usuario", user ? user.email : "No logueado");
         actualizarBotonNavegacion(user);
 
-        // Vista del carrito si está loguado
         if (user) {
             actualizarVistaCarrito();
             actualizarContadorCarrito();
         } else {
-            // Limpiar carrito visual para visitantes
             const tbody = document.querySelector('#lista-carrito tbody')
-            if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">🔒 Inicia sesión para ver tu carrito</td></tr>';
+            if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">🔒 Inicia sesión para ver tu carrito</td</tr>';
         }
     });
 }
 
+// ============================================
+// CIERRE AUTOMÁTICO DEL MENÚ MÓVIL (DESPUÉS DE 2 SEGUNDOS)
+// ============================================
+
+function configurarCierreMenuMovil() {
+    const menuCheckbox = document.getElementById('menu');
+    const menuOverlay = document.querySelector('.menu-overlay');
+    const menuLinks = document.querySelectorAll('.navbar a, .navbar button, .btn-cerrar-sesion, .btn-iniciar-sesion');
+    let timeoutId = null;
+
+    if (!menuCheckbox) return;
+
+    function cerrarMenu() {
+        if (menuCheckbox.checked) {
+            menuCheckbox.checked = false;
+        }
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    }
+
+    function iniciarTemporizadorCierre() {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        if (menuCheckbox.checked) {
+            timeoutId = setTimeout(() => {
+                cerrarMenu();
+            }, 2000);
+        }
+    }
+
+    menuCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            iniciarTemporizadorCierre();
+        } else {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        }
+    });
+
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', cerrarMenu);
+    }
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            setTimeout(() => {
+                cerrarMenu();
+            }, 100);
+        });
+    });
+}
+
 // =============================
-// Cambio de bton de navegacion
+// Cambio de botón de navegación
 // =============================
 function actualizarBotonNavegacion(user) {
     const authContainer = document.getElementById('auth-button-container');
@@ -494,7 +558,6 @@ window.hacerPedido = async () => {
         return;
     }
 
-    // Obtener nombre del usuario desde Realtime Database
     let nombreUsuario = user.email?.split('@')[0] || "Usuario";
 
     try {
@@ -598,10 +661,25 @@ function configurarBuscador() {
 }
 
 // ============================================
+// CIERRE AL HACER CLIC FUERA DEL CARRITO EN MÓVIL
+// ============================================
+document.addEventListener('click', function(event) {
+    const carritoDiv = document.getElementById('carrito');
+    const submenu = document.getElementById('submenu-carrito');
+    
+    if (window.innerWidth <= 768 && carritoDiv && carritoDiv.classList.contains('mostrar')) {
+        if (!carritoDiv.contains(event.target) && !submenu.contains(event.target)) {
+            carritoDiv.classList.remove('mostrar');
+        }
+    }
+});
+
+// ============================================
 // INICIALIZACIÓN
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     configurarCarritoDesplegable();
+    configurarCierreMenuMovil(); // ← Agregado: cierre automático del menú
     
     const btnVaciar = document.getElementById('vaciar-carrito');
     if (btnVaciar) {
