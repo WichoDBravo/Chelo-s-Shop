@@ -215,7 +215,7 @@ th, td {
     
     .submenu:hover #carrito {
         min-width: 280px;
-        right: -140px;
+        right: 0px;
     }
     
     table {
