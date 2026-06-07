@@ -570,11 +570,11 @@ th, td {
         padding: 50px 30px;
         text-align: center;
     }
-    
+
     .submenu:hover #carrito {
         min-width: 300px;
         top: 30px;
-        right: -5px;
+        right: 20px;
     }
 }
 
