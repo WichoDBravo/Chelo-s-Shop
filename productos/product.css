@@ -112,14 +112,6 @@ body::before {
     width: 25px;
 }
 
-.menu-icono {
-    filter: brightness(0) saturate(100%) invert(65%) sepia(94%) saturate(1234%) hue-rotate(350deg) brightness(102%) contrast(101%);
-}
-
-.menu-icono {
-    filter: brightness(0) invert(1);
-}
-
 .menu label {
     cursor: pointer;
     display: none;
@@ -461,32 +453,111 @@ th, td {
 
 @media (max-width: 991px) {
     .menu {
-        padding: 20px;
+        padding: 12px 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
     }
     
     .menu label {
-        display: initial;
+        display: block;    
+    }
+
+    .submenu {
+        order: 2;
+        margin-left: auto;
+    }
+
+    .menu-icono {
+        width: 28px;
     }
     
     .menu .navbar {
-        padding: 24px 8px;
-        position: absolute;
-        top: 100%;
+        position: fixed;
+        top: 60px;
+        left: -280px;
+        width: 250px;
+        height: auto;
+        max-height: 80vh;
+        background: rgba(17, 24, 39, 0.98);
+        backdrop-filter: blur(20px);
+        display: block;
+        transition: left 0.3s ease;
+        z-index: 2000;
+        padding: 15px 0;
+        margin-top: 0;
+        border-radius: 0 12px 12px 0;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+    }
+
+    #menu:checked ~ .navbar {
         left: 0;
-        right: 0;
-        background-color: rgba(17, 24, 39, 0.95);
-        backdrop-filter: blur(16px);
-        display: none;
-        border-radius: var(--border-radius-md);
-        margin-top: var(--spacing-sm);
+    }
+
+    #menu:checked ~ .menu-overlay {
+        display: block;
+    }
+
+    .menu .navbar ul {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
     }
     
     .menu .navbar ul li {
         width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu .navbar ul li a {
+        padding: 12px 20px;
+        font-size: 14px;
+        display: block;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: left;
+    }
+
+    .menu .navbar ul li a:hover {
+        background: rgba(255, 144, 0, 0.1);
+        color: #ff9000;
+        transform: none;
+    }
+
+    #auth-button-container {
+        width: 100%;
+        padding: 0;
     }
     
     #menu:checked ~ .navbar {
         display: initial;
+    }
+
+    #auth-button-container div {
+        flex-direction: column;
+        width: 95%;
+        padding: 0;
+    }
+
+    #auth-button-container span {
+        display: block;
+        padding: 10px 20px;
+        color: #ff9000;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-cerrar-sesion,
+    .btn-iniciar-sesion {
+        position: static;
+        width: calc(100% - 20px);
+        margin: 8px 10px;
+        text-align: center;
+        padding: 8px 15px !important;
+        font-size: 13px !important;
     }
     
     .header {
@@ -500,40 +571,10 @@ th, td {
         text-align: center;
     }
     
-    .header-txt {
-        width: 100%;
-        margin-right: 0;
-    }
-    
-    .header-txt h1 {
-        font-size: 40px;
-        line-height: 50px;
-    }
-    
-    .app {
-        flex-direction: column;
-        padding: 50px 30px;
-        text-align: center;
-    }
-    
-    .app-txt {
-        width: 100%;
-    }
-    
-    .descarga {
-        justify-content: center;
-        margin-top: var(--spacing-md);
-    }
-    
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-lg);
-    }
-    
     .submenu:hover #carrito {
         min-width: 300px;
-        right: -100px;
+        top: 30px;
+        right: -5px;
     }
 }
 
@@ -740,5 +781,187 @@ th, td {
     .productos-grid {
         grid-template-columns: 1fr !important;
         gap: 15px !important;
+    }
+}
+
+/* ============================================ */
+/* ALINEACIÓN PERFECTA DE BOTONES */
+/* ============================================ */
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    align-items: stretch;
+}
+
+.producto-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* Todo el contenido que no sea el botón */
+.producto-card > *:not(.btn-agregar-carrito):not(.cantidad-selector) {
+    flex-shrink: 0;
+}
+
+/* Selector de cantidad */
+.producto-card .cantidad-selector {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Botón de agregar al carrito - siempre al fondo */
+.producto-card .btn-agregar-carrito,
+.producto-card button:last-of-type {
+    margin-top: auto;
+    width: 100%;
+    align-self: flex-end;
+}
+
+/* Responsive tablet */
+@media (max-width: 900px) {
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+/* Responsive móvil */
+@media (max-width: 600px) {
+    .productos-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+/* ============================================ */
+/* ALINEACIÓN DE BOTONES EN TARJETAS DE PRODUCTOS */
+/* ============================================ */
+
+/* Grid de productos */
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    align-items: stretch;
+}
+
+/* Tarjeta como flex column */
+.producto-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 450px;
+}
+
+/* El contenido del medio (precio, stock, marca) empuja hacia abajo */
+.producto-card .precio,
+.producto-card .stock {
+    margin-bottom: 5px;
+}
+
+/* Selector de cantidad - se mantiene en su lugar */
+.cantidad-selector {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Botón de agregar al carrito - siempre al fondo */
+.btn-agregar-carrito {
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+}
+
+/* Responsive tablet */
+@media (max-width: 900px) {
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+/* Responsive móvil */
+@media (max-width: 600px) {
+    .productos-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .producto-card {
+        min-height: auto;
+    }
+}
+
+/* ============================================ */
+/* MISMA ALTURA EN TARJETAS */
+/* ============================================ */
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    align-items: start;
+}
+
+.producto-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* Todo el contenido se distribuye */
+.producto-card > * {
+    width: 100%;
+}
+
+/* El botón se queda al fondo */
+.btn-agregar-carrito {
+    margin-top: auto;
+}
+
+/* ============================================ */
+/* ALINEACIÓN DEL NAVBAR EN ESCRITORIO */
+/* ============================================ */
+
+@media (min-width: 992px) {
+    .menu .navbar ul {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Contenedor de autenticación */
+    #auth-button-container {
+        display: flex;
+        align-items: center;
+    }
+
+    #auth-button-container div {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+    }
+
+    /* Nombre de usuario */
+    #auth-button-container span {
+        font-size: 14px;
+        color: #ff9000;
+        white-space: nowrap;
+    }
+
+    /* Botones */
+    .btn-cerrar-sesion,
+    .btn-iniciar-sesion {
+        padding: 6px 18px !important;
+        font-size: 13px !important;
+        white-space: nowrap;
     }
 }
