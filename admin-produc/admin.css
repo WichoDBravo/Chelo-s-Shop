@@ -262,38 +262,89 @@ th {
 }
 
 @media (max-width: 991px) {
-    .menu {
-        padding: 20px;
-    }
-    
-    .menu label {
-        display: initial;
-    }
-    
-    .menu .navbar {
-        padding: 25px 8px;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: rgba(17, 24, 39, 0.95);
-        backdrop-filter: blur(16px);
-        display: none;
-        border-radius: 8px;
-        margin-top: 8px;
-    }
-    
-    .menu .navbar ul li {
+     .menu {
+        padding: 12px 20px;
+        position: fixed;
+        top: 0;
         width: 100%;
     }
-    
-    #menu:checked ~ .navbar {
-        display: initial;
+
+    .menu label {
+        display: block;
+        order: 1;
+        z-index: 1001;
     }
-    
-    .submenu:hover #carrito {
-        min-width: 300px;
-        right: -100px;
+
+    .logo {
+        order: 2;
+        margin: 0 auto;
+        font-size: 20px;
+    }
+
+    .submenu {
+        order: 3;
+        margin-left: auto;
+    }
+
+    .menu-icono {
+        width: 28px;
+    }
+
+    /* Menú lateral con altura automática */
+    .menu .navbar {
+        position: fixed;
+        top: 60px;
+        left: -300px;
+        width: 300px;
+        height: auto;
+        max-height: 80vh;
+        background: rgba(17, 24, 39, 0.98);
+        backdrop-filter: blur(20px);
+        display: block;
+        transition: left 0.3s ease;
+        z-index: 2000;
+        padding: 15px 0;
+        margin-top: 0;
+        border-radius: 0 12px 12px 0;
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        overflow-y: auto;
+    }
+
+    #menu:checked ~ .navbar {
+        left: 0;
+    }
+
+    #menu:checked ~ .menu-overlay {
+        display: block;
+    }
+
+    /* Items del menú */
+    .menu .navbar ul {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+    }
+
+    .menu .navbar ul li {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu .navbar ul li a {
+        padding: 12px 20px;
+        font-size: 14px;
+        display: block;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: left;
+    }
+
+    .menu .navbar ul li a:hover {
+        background: rgba(255, 144, 0, 0.1);
+        color: #ff9000;
+        transform: none;
     }
 }
 
