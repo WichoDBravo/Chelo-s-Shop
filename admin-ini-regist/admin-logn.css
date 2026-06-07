@@ -207,7 +207,6 @@ ion-icon {
     border: 2px solid green !important;
 }
 
-
 /* Efecto de Movimiento */
 .sign-up{
     transform: translatex(-100%);
@@ -298,43 +297,56 @@ ion-icon {
     background: rgb(194, 57, 33);
 }
 
+.divisor h2 {
+    display: none;
+}
+
 /* ============================================ */
 /* RESPONSIVE
 /* ============================================ */
 
 @media (max-width: 768px) {
     body {
+        top: 50px;
         padding: 15px;
         height: auto;
         min-height: 100vh;
     }
-
+    
     .container {
-        width: 95%;
+        width: 65%;
         height: auto;
         min-height: 450px;
         flex-direction: column;
         border-radius: 20px;
     }
-
+    
     .container-form {
         width: 100%;
         height: auto;
         min-height: 400px;
     }
+    
+    .container-form .sign-up {
+        text-align: center;
 
+    }
     .container-form form {
         padding: 30px 20px;
         border: none;
     }
-
+    
     .container-input {
         width: 100%;
         max-width: 280px;
     }
-
+    
     .container-input input {
         font-size: 14px;
+    }
+    
+    .divisor h2 {
+        text-align: center;
     }
 
     .button {
@@ -355,6 +367,7 @@ ion-icon {
         z-index: 20;
     }
 
+
     /* Ocultar el borde rojo de prueba */
     .container-form form {
         border: none;
@@ -364,7 +377,24 @@ ion-icon {
     .container-form {
         overflow-y: auto;
     }
-}
+
+    .container-welcome {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        transform: translateY(0);
+        border-radius: 0 0 20px 20px;
+        display: none;
+    }
+    
+    
+    /* Desactivar transformaciones que interfieran */
+    .sign-up {
+        transform: translateY(0);
+    }
+
+    }
 
 @media (max-width: 480px) {
     .container-input {
