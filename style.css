@@ -732,3 +732,45 @@ ion-icon {
         flex-wrap: wrap;
     }
 }
+
+/* ============================================ */
+/* ALINEACIÓN DEL NAVBAR EN ESCRITORIO */
+/* ============================================ */
+
+@media (min-width: 992px) {
+    .menu .navbar ul {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Contenedor de autenticación */
+    #auth-button-container {
+        display: flex;
+        align-items: center;
+    }
+
+    #auth-button-container div {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+    }
+
+    /* Nombre de usuario */
+    #auth-button-container span {
+        font-size: 14px;
+        color: #ff9000;
+        white-space: nowrap;
+    }
+
+    /* Botones */
+    .btn-cerrar-sesion,
+    .btn-iniciar-sesion {
+        padding: 6px 18px !important;
+        font-size: 13px !important;
+        white-space: nowrap;
+    }
+}
