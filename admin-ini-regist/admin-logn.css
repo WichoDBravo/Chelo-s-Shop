@@ -314,7 +314,7 @@ ion-icon {
     }
     
     .container {
-        width: 65%;
+        width: 80%;
         height: auto;
         min-height: 450px;
         flex-direction: column;
