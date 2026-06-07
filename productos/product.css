@@ -966,6 +966,6 @@ th, td {
     }
 }
 
-ion-icon {
-    color: white;
+.menu-icono {
+    filter: brightness(0) invert(1);
 }
