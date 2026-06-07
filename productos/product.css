@@ -265,6 +265,11 @@ th, td {
         grid-template-columns: 1fr;
         gap: 15px;
     }
+
+    .submenu:hover #carrito {
+        min-width: 280px;
+        right: 50px;
+    }
     
     .producto-card {
         padding: 15px;
