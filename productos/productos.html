@@ -52,6 +52,34 @@
             <div id="resultadosBusqueda"></div>
         </div>
     </div>
+<!-- FILTROS Y ORDENAMIENTO -->
+<div class="filtros-container">
+    <div class="filtro-categorias">
+        <label>📁 Categoría:</label>
+        <select id="filtroCategoria">
+            <option value="todos">Todos los productos</option>
+            <option value="lacteos">🥛 Lácteos</option>
+            <option value="liquidos">💧 Líquidos</option>
+            <option value="charcuteria">🍖 Charcutería</option>
+            <option value="herramientas">🔧 Herramientas</option>
+            <option value="enlatados">🥫 Enlatados / Conservas</option>
+            <option value="escolares">📚 Útiles Escolares</option>
+            <option value="legumbres">🥔 Legumbres / Verduras</option>
+            <option value="otros">📦 Otros</option>
+        </select>
+    </div>
+
+    <div class="filtro-orden">
+        <label>🔄 Ordenar por:</label>
+        <select id="ordenarProductos">
+            <option value="nombre-asc">Nombre (A-Z)</option>
+            <option value="nombre-desc">Nombre (Z-A)</option>
+            <option value="precio-asc">Precio (menor a mayor)</option>
+            <option value="precio-desc">Precio (mayor a menor)</option>
+            <option value="stock-desc">Stock (mayor a menor)</option>
+        </select>
+    </div>
+</div>
 
     <div class="productos-container">
         <div class="productos-grid" id="listaProductos">
