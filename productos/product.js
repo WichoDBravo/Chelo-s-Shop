@@ -473,40 +473,98 @@ function configurarCarritoDesplegable() {
     if (!submenu || !carritoDiv) return;
     
     let timeoutId;
-    let isMouseOnSubmenu = false;
-    let isMouseOnCarrito = false;
+    let isCarritoAbierto = false;
+    
+    // Detectar si es dispositivo táctil
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     
     function mostrarCarrito() {
         if (timeoutId) clearTimeout(timeoutId);
         carritoDiv.classList.add('mostrar');
         actualizarVistaCarrito();
+        isCarritoAbierto = true;
+        
+        // En móvil, agregar overlay
+        if (window.innerWidth <= 991) {
+            agregarOverlayCarrito();
+        }
     }
     
-    function ocultarCarritoConDelay() {
+    function ocultarCarrito() {
         if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            if (!isMouseOnSubmenu && !isMouseOnCarrito) {
-                carritoDiv.classList.remove('mostrar');
-            }
-        }, 2000);
+        carritoDiv.classList.remove('mostrar');
+        isCarritoAbierto = false;
+        
+        // Remover overlay
+        removerOverlayCarrito();
     }
     
-    submenu.addEventListener('mouseenter', () => { 
-        isMouseOnSubmenu = true; 
-        mostrarCarrito(); 
-    });
-    submenu.addEventListener('mouseleave', () => { 
-        isMouseOnSubmenu = false; 
-        ocultarCarritoConDelay(); 
-    });
-    carritoDiv.addEventListener('mouseenter', () => { 
-        isMouseOnCarrito = true; 
-        if (timeoutId) clearTimeout(timeoutId); 
-        mostrarCarrito(); 
-    });
-    carritoDiv.addEventListener('mouseleave', () => { 
-        isMouseOnCarrito = false; 
-        ocultarCarritoConDelay(); 
+    function agregarOverlayCarrito() {
+        removerOverlayCarrito();
+        const overlay = document.createElement('div');
+        overlay.id = 'carrito-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            cursor: pointer;
+        `;
+        overlay.addEventListener('click', ocultarCarrito);
+        document.body.appendChild(overlay);
+    }
+    
+    function removerOverlayCarrito() {
+        const overlay = document.getElementById('carrito-overlay');
+        if (overlay) overlay.remove();
+    }
+    
+    // ========== DESKTOP: comportamiento con hover ==========
+    if (!isTouchDevice && window.innerWidth > 991) {
+        submenu.addEventListener('mouseenter', mostrarCarrito);
+        submenu.addEventListener('mouseleave', () => {
+            timeoutId = setTimeout(() => {
+                if (!carritoDiv.matches(':hover')) {
+                    ocultarCarrito();
+                }
+            }, 300);
+        });
+        carritoDiv.addEventListener('mouseenter', () => {
+            if (timeoutId) clearTimeout(timeoutId);
+        });
+        carritoDiv.addEventListener('mouseleave', ocultarCarrito);
+    } 
+    // ========== MÓVIL: comportamiento con clic ==========
+    else {
+        submenu.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (isCarritoAbierto) {
+                ocultarCarrito();
+            } else {
+                mostrarCarrito();
+            }
+        });
+        
+        // Cerrar al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (isCarritoAbierto && 
+                !submenu.contains(e.target) && 
+                !carritoDiv.contains(e.target)) {
+                ocultarCarrito();
+            }
+        });
+    }
+    
+    // Al redimensionar la ventana
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 991 && isCarritoAbierto) {
+            ocultarCarrito();
+        }
     });
 }
 
