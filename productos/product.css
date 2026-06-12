@@ -121,24 +121,114 @@ body::before {
     position: relative;
 }
 
+/* ============================================ */
+/* ESTILOS MEJORADOS DEL CARRITO - SIN CAMBIOS AL TOCAR */
+/* ============================================ */
+
 .submenu #carrito {
-    border-radius: 15px;
-    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 380px;
+    max-width: 90vw;
+    background: rgba(17, 24, 39, 0.98) !important;
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
 }
 
 .submenu #carrito.mostrar {
-    display: block;
-    position: absolute;
+    opacity: 1;
+    visibility: visible;
+    display: block !important;
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+    .submenu #carrito {
+        transform: translateY(10px);
+    }
+    
+    .submenu #carrito.mostrar {
+        transform: translateY(0);
+    }
+}
+
+/* Móvil - carrito lateral fijo */
+@media (max-width: 991px) {
+    .submenu #carrito {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        border-radius: 20px 0 0 20px;
+        transform: translateX(100%);
+        opacity: 1;
+        visibility: visible;
+        padding-top: 60px;
+        overflow-y: auto;
+    }
+    
+    .submenu #carrito.mostrar {
+        transform: translateX(0);
+    }
+    
+    /* Botón cerrar */
+    .submenu #carrito.mostrar::before {
+        content: '✕';
+        position: fixed;
+        top: 15px;
+        right: 20px;
+        font-size: 22px;
+        color: white;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        z-index: 1001;
+    }
+    
+    .submenu #carrito.mostrar::before:active {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+}
+
+/* Evitar cambios de estilo al hacer hover o touch */
+.submenu #carrito:hover,
+.submenu #carrito:active,
+.submenu #carrito:focus,
+.submenu #carrito.mostrar:hover {
+    background: rgba(17, 24, 39, 0.98) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Overlay del carrito en móvil */
+#carrito-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     right: 0;
-    backdrop-filter: blur(10px);
-    top: 100%;
-    z-index: 1;
-    background-color: rgba(17, 24, 39, 0.95);
-    padding: 20px;
-    min-width: 400px;
-    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    cursor: pointer;
 }
 
 table {
@@ -148,6 +238,126 @@ table {
 th, td {
     color: white;
     padding: 8px;
+}
+
+/* Estilos de la tabla dentro del carrito */
+#carrito table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: transparent;
+}
+
+#carrito th {
+    color: #ff9000;
+    font-weight: 600;
+    padding: 10px 5px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#carrito td {
+    padding: 10px 5px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e5e7eb;
+}
+
+#carrito button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+#carrito button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* Botón vaciar carrito */
+#vaciar-carrito {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    margin-top: 15px;
+    width: 100%;
+    display: block;
+}
+
+#vaciar-carrito:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* Ocultar vaciar carrito cuando no hay sesión */
+#vaciar-carrito[style*="display: none"] {
+    display: none !important;
+}
+
+/* Botón hacer pedido */
+.btn-hacer-pedido {
+    background: linear-gradient(90deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.btn-hacer-pedido:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+/* Responsive tabla en móvil */
+@media (max-width: 480px) {
+    #carrito table, 
+    #carrito thead, 
+    #carrito tbody, 
+    #carrito th, 
+    #carrito td, 
+    #carrito tr {
+        display: block;
+    }
+    
+    #carrito thead {
+        display: none;
+    }
+    
+    #carrito tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px 0;
+    }
+    
+    #carrito td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 5px;
+        border: none;
+    }
+    
+    #carrito td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #ff9000;
+        margin-right: 10px;
+    }
 }
 
 .btn-3 {
@@ -201,21 +411,11 @@ th, td {
     #menu:checked ~ .navbar {
         display: initial;
     }
-    
-    .submenu:hover #carrito {
-        min-width: 300px;
-        right: 0px;
-    }
 }
 
 @media (max-width: 480px) {
     .logo {
         font-size: 20px;
-    }
-    
-    .submenu:hover #carrito {
-        min-width: 280px;
-        right: -140px;
     }
     
     table {
@@ -246,6 +446,9 @@ th, td {
     padding: 20px;
     transition: all 0.3s ease;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .producto-card:hover {
@@ -255,14 +458,14 @@ th, td {
 }
 
 @media (max-width: 900px) {
-    .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 }
 
 @media (max-width: 600px) {
-    .product-grid {
+    .productos-grid {
         grid-template-columns: 1fr;
         gap: 15px;
     }
@@ -448,6 +651,13 @@ th, td {
     text-align: center;
 }
 
+/* Botón agregar al carrito - siempre al fondo */
+.btn-agregar-carrito {
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+}
+
 /* ================================================
    MANTENIENDO FUNCIONALIDAD
    ================================================ */
@@ -589,11 +799,6 @@ th, td {
     
     .descarga img {
         width: 120px;
-    }
-    
-    .submenu:hover #carrito {
-        min-width: 280px;
-        right: -140px;
     }
     
     table {
@@ -833,65 +1038,6 @@ th, td {
 }
 
 /* ============================================ */
-/* ALINEACIÓN DE BOTONES EN TARJETAS DE PRODUCTOS */
-/* ============================================ */
-
-/* Grid de productos */
-.productos-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    align-items: stretch;
-}
-
-/* Tarjeta como flex column */
-.producto-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 450px;
-}
-
-/* El contenido del medio (precio, stock, marca) empuja hacia abajo */
-.producto-card .precio,
-.producto-card .stock {
-    margin-bottom: 5px;
-}
-
-/* Selector de cantidad - se mantiene en su lugar */
-.cantidad-selector {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-/* Botón de agregar al carrito - siempre al fondo */
-.btn-agregar-carrito {
-    margin-top: auto !important;
-    margin-bottom: 0 !important;
-    width: 100%;
-}
-
-/* Responsive tablet */
-@media (max-width: 900px) {
-    .productos-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-}
-
-/* Responsive móvil */
-@media (max-width: 600px) {
-    .productos-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .producto-card {
-        min-height: auto;
-    }
-}
-
-/* ============================================ */
 /* MISMA ALTURA EN TARJETAS */
 /* ============================================ */
 
@@ -1033,4 +1179,29 @@ th, td {
     .filtro-categorias select, .filtro-orden select {
         flex: 1;
     }
+}
+
+/* ============================================ */
+/* ESTILOS ADICIONALES PARA CARRITO SIN SESIÓN */
+/* ============================================ */
+
+/* Mensaje de inicio de sesión en el carrito */
+#carrito .sin-sesion-mensaje {
+    text-align: center;
+    padding: 20px;
+}
+
+#carrito .sin-sesion-mensaje p {
+    margin: 10px 0;
+    color: #e5e7eb;
+}
+
+#carrito .sin-sesion-mensaje small {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+/* Ocultar botón vaciar carrito cuando no hay sesión */
+#vaciar-carrito.oculto {
+    display: none !important;
 }
