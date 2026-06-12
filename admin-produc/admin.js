@@ -15,9 +15,15 @@ async function agregarProducto() {
     const precio = parseFloat(document.getElementById("precio")?.value);
     const stock = parseInt(document.getElementById("stock")?.value);
     const imagenURL = document.getElementById("imagenURL")?.value;
+    const categoria = document.getElementById("categoria")?.value || "otros";
     
     if (!nombre || isNaN(precio) || isNaN(stock)) {
         alert("⚠️ Completa: Nombre, Precio y Stock");
+        return;
+    }
+
+    if (!categoria || categoria == "") {
+        alert("⚠️ Selecciona una categoría");
         return;
     }
     
@@ -27,7 +33,8 @@ async function agregarProducto() {
             marca: marca || "",
             precio: precio,
             stock: stock,
-            imagenURL: imagenURL || ""
+            imagenURL: imagenURL || "",
+            categoria: categoria
         });
         
         // Limpiar formulario
@@ -36,6 +43,7 @@ async function agregarProducto() {
         document.getElementById("precio").value = "";
         document.getElementById("stock").value = "";
         document.getElementById("imagenURL").value = "";
+        document.getElementById("categoria").value = "";
         document.getElementById("vistaPrevia").style.display = 'none';
         
         alert("✅ Producto agregado correctamente");
@@ -65,6 +73,7 @@ window.editarProducto = async (id) => {
             document.getElementById("precio").value = data.precio || '';
             document.getElementById("stock").value = data.stock || '';
             document.getElementById("imagenURL").value = data.imagenURL || '';
+            document.getElementById("categoria").value = data.categoria || 'otros';
 
             // Mostrar vista previa de la imagen si existe
             if (data.imagenURL) {
@@ -175,6 +184,7 @@ async function cargarProductos() {
         
         snapshot.forEach(doc => {
             const data = doc.data();
+            const nombreCategoria = obtenerNombreCategoria(data.categoria || 'otros');
             lista.innerHTML += `
                 <div class="producto-card">
                     ${data.imagenURL ? `<img src="${data.imagenURL}" alt="${data.nombre}">` : '<div style="width:100%; height:120px; background:#333; border-radius:8px; display:flex; align-items:center; justify-content:center;">📷</div>'}
@@ -182,6 +192,7 @@ async function cargarProductos() {
                     <p class="precio">💰 Precio: Bs.${data.precio || 0}</p>
                     <p class="stock">📦 Stock: ${data.stock || 0}</p>
                     <p class="marca">🏷️ Marca: ${data.marca || 'Sin marca'}</p>
+                    <p class="categoria-admin">📁 ${nombreCategoria}</p>
                     <div class="producto-botones">
                         <button class="btn-editar" onclick="window.editarProducto('${doc.id}')">✏️ Editar</button>
                         <button class="btn-eliminar" onclick="window.eliminarProducto('${doc.id}')">🗑️ Eliminar</button>
@@ -197,6 +208,21 @@ async function cargarProductos() {
         console.error("Error al cargar productos:", error);
         lista.innerHTML = '<div class="error">❌ Error al cargar productos. Verifica Firestore.</div>';
     }
+}
+
+// Obtener nombre de categoria
+function obtenerNombreCategoria(categoria) {
+    const categorias = {
+        'lacteos': '🥛 Lácteos',
+        'liquidos': '💧 Líquidos',
+        'charcuteria': '🍖 Charcutería',
+        'herramientas': '🔧 Herramientas',
+        'enlatados': '🥫 Enlatados',
+        'escolares': '📚 Útiles Escolares',
+        'legumbres': '🥔 Legumbres / Verduras',
+        'otros': '📦 Otros',
+    };
+    return categorias[categoria] || '📦 Producto'
 }
 
 // ============================================
