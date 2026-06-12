@@ -116,7 +116,7 @@ function renderizarProductos(productos) {
                 <p style="color:#666;">${producto.marca || ''}</p>
                 <p class="precio" style="font-size:20px; color:#ff9000; font-weight:bold;">💰 Bs.${producto.precio}</p>
                 <p class="stock" style="color:${stockActual > 0 ? '#10b981' : '#ef4444'};">📦 Stock disponible: ${stockActual}</p>
-                <p class="categoria" style="color:#9ca3af; font-size:12px;">📁 ${obtenerNombreCategoria(producto.categoria)}</p>
+                <p class="categoria" style="color:#9ca3af; font-size:12px;">🎲 ${obtenerNombreCategoria(producto.categoria)}</p>
                 
                 <div class="cantidad-selector" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0;">
                     <button type="button" class="btn-disminuir" data-id="${producto.id}" style="background:#333; color:white; border:none; width:35px; height:35px; border-radius:8px; cursor:pointer; font-size:18px;">-</button>
