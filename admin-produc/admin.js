@@ -220,7 +220,7 @@ function obtenerNombreCategoria(categoria) {
         'enlatados': '🥫 Enlatados',
         'escolares': '📚 Útiles Escolares',
         'legumbres': '🥔 Legumbres / Verduras',
-        'otros': '📦 Otros',
+        'otros': '🎲 Otros',
     };
     return categorias[categoria] || '📦 Producto'
 }
