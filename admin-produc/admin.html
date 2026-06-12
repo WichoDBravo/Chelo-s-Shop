@@ -127,13 +127,13 @@
             console.log('Estado admin:', adminLogueado);
             
             if (adminLogueado === 'true') {
-                // Admin logueado: mostrar nombre y botón cerrar sesión
-                authContainer.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <span style="color: #ff9000; font-size: 14px;">👑 ${adminNombre || 'Admin'} ${adminRol === 'super_admin' ? '⭐' : ''}</span>
-                        <a href="#" id="cerrar-sesion-admin-btn" style="background: #dc2626; padding: 8px 18px; border-radius: 40px; color: white; text-decoration: none; font-size: 13px;">Cerrar Sesión</a>
-                    </div>
-                `;
+        // Admin logueado: mostrar nombre y botón cerrar sesión
+        authContainer.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 20px; margin-left: auto;">
+            <span style="color: #ff9000; font-size: 14px; font-weight: 500; white-space: nowrap;">👑 ${adminNombre || 'Admin'} ${adminRol === 'super_admin' ? '⭐' : ''}</span>
+            <a href="#" id="cerrar-sesion-admin-btn" style="background: #dc2626; padding: 8px 20px; border-radius: 40px; color: white; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s ease; display: inline-block;">Cerrar Sesión</a>
+         </div>
+        `;
                 
                 const cerrarBtn = document.getElementById('cerrar-sesion-admin-btn');
                 if (cerrarBtn) {
