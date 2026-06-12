@@ -1,5 +1,5 @@
 // ============================================
-// IMPORTACIONES
+// 1. IMPORTACIONES
 // ============================================
 import { db, auth } from '../cheloshopDB/firebase-config.js';
 import { collection, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -8,9 +8,16 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 const productosRef = collection(db, "productos");
 
 // ============================================
-// FUNCIÓN PARA MOSTRAR PRODUCTOS
+// 2. VARIABLES GLOBALES
 // ============================================
-async function mostrarProductosAlUsuario() {
+let todosLosProductosGlobal = [];
+let categoriaActual = "todos";
+let ordenActual = "nombre-asc";
+
+// ============================================
+// 3. FUNCIÓN PARA CARGAR PRODUCTOS
+// ============================================
+async function cargarProductos() {
     const contenedor = document.getElementById("listaProductos");
     if (!contenedor) return;
     
@@ -18,48 +25,23 @@ async function mostrarProductosAlUsuario() {
     
     try {
         const snapshot = await getDocs(productosRef);
-        contenedor.innerHTML = "";
-        
-        if (snapshot.empty) {
-            contenedor.innerHTML = '<div class="no-data">✨ No hay productos disponibles por el momento.</div>';
-            return;
-        }
+        todosLosProductosGlobal = [];
         
         snapshot.forEach(doc => {
             const p = doc.data();
-            const stockActual = p.stock || 0;
-            const estaAgotado = stockActual <= 0;
-            const productoId = doc.id;
-            const nombreProducto = p.nombre || 'Producto';
-            const precioProducto = p.precio || 0;
-            
-            contenedor.innerHTML += `
-    <div class="producto-card" data-id="${productoId}" data-stock="${stockActual}">
-        ${p.imagenURL ? `<img src="${p.imagenURL}" style="max-width:150px; border-radius:8px;" alt="${p.nombre}">` : '<div style="width:150px; height:150px; background:#333; display:flex; align-items:center; justify-content:center; margin:0 auto; border-radius:8px;">📷 Sin imagen</div>'}
-        <h3 style="color: white;">${nombreProducto}</h3>
-        <p style="color: white;">${p.marca || ''}</p>
-        <p class="precio" style="font-size:20px; color:#ff9000; font-weight:bold;">💰 Bs.${precioProducto}</p>
-        <p class="stock" style="color:${stockActual > 0 ? '#10b981' : '#ef4444'};">📦 Stock disponible: ${stockActual}</p>
-        
-        <!-- Selector de cantidad -->
-        <div class="cantidad-selector" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0;">
-            <button type="button" class="btn-disminuir" data-id="${productoId}" style="background:#333; color:white; border:none; width:35px; height:35px; border-radius:8px; cursor:pointer; font-size:18px;">-</button>
-            <span id="cantidad-${productoId}" class="cantidad-valor" style="color:white; font-size:18px; font-weight:bold; min-width:40px; text-align:center;">1</span>
-            <button type="button" class="btn-aumentar" data-id="${productoId}" style="background:#333; color:white; border:none; width:35px; height:35px; border-radius:8px; cursor:pointer; font-size:18px;">+</button>
-        </div>
-        
-        <button class="btn-agregar-carrito" data-id="${productoId}" data-nombre="${nombreProducto}" data-precio="${precioProducto}" data-stock="${stockActual}"
-            style="background:${estaAgotado ? '#6b7280' : '#ff9000'}; color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer; margin-top:5px; width:100%; transition: all 0.3s ease;"
-            ${estaAgotado ? 'disabled' : ''}>
-            ${estaAgotado ? '❌ Agotado' : '🛒 Agregar al Carrito'}
-        </button>
-    </div>
-`;
+            todosLosProductosGlobal.push({
+                id: doc.id,
+                nombre: p.nombre || 'Producto',
+                marca: p.marca || '',
+                precio: p.precio || 0,
+                stock: p.stock || 0,
+                imagenURL: p.imagenURL || '',
+                categoria: p.categoria || 'otros',
+                descripcion: p.descripcion || ''
+            });
         });
         
-        agregarEventosCantidad();
-        agregarEventosAgregarCarrito();
-        configurarBuscador();
+        aplicarFiltrosYOrdenamiento();
         
     } catch (error) {
         console.error("Error al cargar productos:", error);
@@ -68,7 +50,134 @@ async function mostrarProductosAlUsuario() {
 }
 
 // ============================================
-// FUNCIONES PARA EL SELECTOR DE CANTIDAD
+// 4. APLICAR FILTROS Y ORDENAMIENTO
+// ============================================
+function aplicarFiltrosYOrdenamiento() {
+    let productosFiltrados = [...todosLosProductosGlobal];
+    
+    // Filtrar por categoría
+    if (categoriaActual !== "todos") {
+        productosFiltrados = productosFiltrados.filter(p => p.categoria === categoriaActual);
+    }
+    
+    // Ordenar
+    switch (ordenActual) {
+        case "nombre-asc":
+            productosFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            break;
+        case "nombre-desc":
+            productosFiltrados.sort((a, b) => b.nombre.localeCompare(a.nombre));
+            break;
+        case "precio-asc":
+            productosFiltrados.sort((a, b) => a.precio - b.precio);
+            break;
+        case "precio-desc":
+            productosFiltrados.sort((a, b) => b.precio - a.precio);
+            break;
+        case "stock-desc":
+            productosFiltrados.sort((a, b) => b.stock - a.stock);
+            break;
+        default:
+            productosFiltrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    }
+    
+    renderizarProductos(productosFiltrados);
+}
+
+// ============================================
+// 5. RENDERIZAR PRODUCTOS
+// ============================================
+function renderizarProductos(productos) {
+    const contenedor = document.getElementById("listaProductos");
+    if (!contenedor) return;
+    
+    const resultadosDiv = document.getElementById("resultadosBusqueda");
+    
+    if (productos.length === 0) {
+        contenedor.innerHTML = '<div class="no-data">✨ No hay productos que coincidan con los filtros seleccionados.</div>';
+        if (resultadosDiv) resultadosDiv.innerHTML = '🔍 0 productos encontrados';
+        return;
+    }
+    
+    if (resultadosDiv) {
+        resultadosDiv.innerHTML = `🔍 ${productos.length} producto(s) encontrado(s)`;
+    }
+    
+    contenedor.innerHTML = "";
+    
+    productos.forEach(producto => {
+        const stockActual = producto.stock || 0;
+        const estaAgotado = stockActual <= 0;
+        
+        contenedor.innerHTML += `
+            <div class="producto-card" data-id="${producto.id}" data-stock="${stockActual}">
+                ${producto.imagenURL ? `<img src="${producto.imagenURL}" style="max-width:150px; border-radius:8px;" alt="${producto.nombre}">` : '<div style="width:150px; height:150px; background:#333; display:flex; align-items:center; justify-content:center; margin:0 auto; border-radius:8px;">📷 Sin imagen</div>'}
+                <h3>${producto.nombre}</h3>
+                <p style="color:#666;">${producto.marca || ''}</p>
+                <p class="precio" style="font-size:20px; color:#ff9000; font-weight:bold;">💰 Bs.${producto.precio}</p>
+                <p class="stock" style="color:${stockActual > 0 ? '#10b981' : '#ef4444'};">📦 Stock disponible: ${stockActual}</p>
+                <p class="categoria" style="color:#9ca3af; font-size:12px;">📁 ${obtenerNombreCategoria(producto.categoria)}</p>
+                
+                <div class="cantidad-selector" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0;">
+                    <button type="button" class="btn-disminuir" data-id="${producto.id}" style="background:#333; color:white; border:none; width:35px; height:35px; border-radius:8px; cursor:pointer; font-size:18px;">-</button>
+                    <span id="cantidad-${producto.id}" class="cantidad-valor" style="color:white; font-size:18px; font-weight:bold; min-width:40px; text-align:center;">1</span>
+                    <button type="button" class="btn-aumentar" data-id="${producto.id}" style="background:#333; color:white; border:none; width:35px; height:35px; border-radius:8px; cursor:pointer; font-size:18px;">+</button>
+                </div>
+                
+                <button class="btn-agregar-carrito" data-id="${producto.id}" data-nombre="${producto.nombre}" data-precio="${producto.precio}" data-stock="${stockActual}"
+                    style="background:${estaAgotado ? '#6b7280' : '#ff9000'}; color:white; border:none; padding:10px 20px; border-radius:25px; cursor:pointer; margin-top:5px; width:100%; transition: all 0.3s ease;"
+                    ${estaAgotado ? 'disabled' : ''}>
+                    ${estaAgotado ? '❌ Agotado' : '🛒 Agregar al Carrito'}
+                </button>
+            </div>
+        `;
+    });
+    
+    agregarEventosCantidad();
+    agregarEventosAgregarCarrito();
+}
+
+// ============================================
+// 6. OBTENER NOMBRE LEGIBLE DE CATEGORÍA
+// ============================================
+function obtenerNombreCategoria(categoria) {
+    const categorias = {
+        'lacteos': '🥛 Lácteos',
+        'liquidos': '💧 Líquidos',
+        'charcuteria': '🍖 Charcutería',
+        'herramientas': '🔧 Herramientas',
+        'enlatados': '🥫 Enlatados',
+        'escolares': '📚 Útiles Escolares',
+        'legumbres': '🥔 Legumbres / Verduras',
+        'otros': '📦 Otros'
+    };
+    return categorias[categoria] || '📦 Producto';
+}
+
+// ============================================
+// 7. CONFIGURAR FILTROS Y ORDENAMIENTO
+// ============================================
+function configurarFiltros() {
+    const selectCategoria = document.getElementById('filtroCategoria');
+    const selectOrden = document.getElementById('ordenarProductos');
+    
+    if (selectCategoria) {
+        selectCategoria.addEventListener('change', (e) => {
+            categoriaActual = e.target.value;
+            aplicarFiltrosYOrdenamiento();
+        });
+    }
+    
+    if (selectOrden) {
+        selectOrden.addEventListener('change', (e) => {
+            ordenActual = e.target.value;
+            aplicarFiltrosYOrdenamiento();
+        });
+    }
+}
+
+// ============================================
+// 8. FUNCIONES PARA EL SELECTOR DE CANTIDAD
 // ============================================
 function agregarEventosCantidad() {
     document.querySelectorAll('.btn-aumentar').forEach(btn => {
@@ -109,7 +218,7 @@ function disminuirCantidad(event) {
 }
 
 // ============================================
-// AGREGAR AL CARRITO
+// 9. AGREGAR AL CARRITO
 // ============================================
 function agregarEventosAgregarCarrito() {
     document.querySelectorAll('.btn-agregar-carrito').forEach(btn => {
@@ -146,7 +255,7 @@ async function manejarAgregarAlCarrito(event) {
     const stockActualFirestore = await obtenerStockActual(productoId);
     if (cantidadSeleccionada > stockActualFirestore) {
         mostrarNotificacion(`⚠️ El stock ha cambiado. Solo quedan ${stockActualFirestore} unidades`, "error");
-        mostrarProductosAlUsuario();
+        cargarProductos();
         return;
     }
     
@@ -175,13 +284,13 @@ async function manejarAgregarAlCarrito(event) {
     localStorage.setItem(`carrito_${user.uid}`, JSON.stringify(carrito));
     mostrarNotificacion(`✅ ${cantidadSeleccionada}x ${nombre} agregado al carrito`);
     
-    mostrarProductosAlUsuario();
+    cargarProductos();
     actualizarVistaCarrito();
     actualizarContadorCarrito();
 }
 
 // ============================================
-// ACTUALIZAR STOCK EN FIRESTORE
+// 10. ACTUALIZAR STOCK EN FIRESTORE
 // ============================================
 async function actualizarStockEnFirestore(productoId, nuevoStock) {
     try {
@@ -207,7 +316,7 @@ async function obtenerStockActual(productoId) {
 }
 
 // ============================================
-// ELIMINAR DEL CARRITO
+// 11. ELIMINAR DEL CARRITO
 // ============================================
 window.eliminarDelCarrito = async (id) => {
     if (!auth?.currentUser) return;
@@ -227,13 +336,13 @@ window.eliminarDelCarrito = async (id) => {
     
     mostrarNotificacion(`✅ Se devolvieron ${item.cantidad} unidad(es) de ${item.nombre} al stock`);
     
-    mostrarProductosAlUsuario();
+    cargarProductos();
     actualizarVistaCarrito();
     actualizarContadorCarrito();
 };
 
 // ============================================
-// VACIAR CARRITO
+// 12. VACIAR CARRITO
 // ============================================
 window.vaciarCarritoCompleto = async () => {
     if (!auth?.currentUser) return;
@@ -259,13 +368,13 @@ window.vaciarCarritoCompleto = async () => {
     localStorage.removeItem(`carrito_${user.uid}`);
     mostrarNotificacion(`✅ Carrito vaciado. Se devolvieron ${totalProductos} producto(s) al stock`);
     
-    mostrarProductosAlUsuario();
+    cargarProductos();
     actualizarVistaCarrito();
     actualizarContadorCarrito();
 };
 
 // ============================================
-// ACTUALIZAR VISTA DEL CARRITO
+// 13. ACTUALIZAR VISTA DEL CARRITO
 // ============================================
 function actualizarVistaCarrito() {
     const tbody = document.querySelector('#lista-carrito tbody');
@@ -288,7 +397,7 @@ function actualizarVistaCarrito() {
     tbody.innerHTML = '';
     
     if (carrito.length === 0) {
-        tbody.innerHTML = '<td><td colspan="5" style="text-align:center;">🛒 Carrito vacío</td</tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">🛒 Carrito vacío</td</td>';
         return;
     }
     
@@ -325,7 +434,7 @@ function actualizarVistaCarrito() {
 function actualizarContadorCarrito() {
     const contador = document.getElementById('contador-carrito');
     if (!contador) return;
-
+    
     if (!auth?.currentUser) {
         contador.style.display = 'none';
         return;
@@ -356,7 +465,7 @@ function mostrarNotificacion(mensaje, tipo = "success") {
 }
 
 // ============================================
-// CONFIGURAR CARRITO DESPLEGABLE
+// 14. CONFIGURAR CARRITO DESPLEGABLE
 // ============================================
 function configurarCarritoDesplegable() {
     const submenu = document.getElementById('submenu-carrito');
@@ -402,42 +511,41 @@ function configurarCarritoDesplegable() {
 }
 
 // ============================================
-// VERIFICAR AUTENTICACIÓN
+// 15. VERIFICAR AUTENTICACIÓN
 // ============================================
 function verificarAutenticacion() {
     if (!auth) {
-        console.error("❌ auth no disponible")
+        console.error("❌ auth no disponible");
         return;
     }
-
-    mostrarProductosAlUsuario();
-
+    
+    cargarProductos();
+    
     onAuthStateChanged(auth, (user) => {
         console.log("onAuthStateChanged - Usuario", user ? user.email : "No logueado");
         actualizarBotonNavegacion(user);
-
+        
         if (user) {
             actualizarVistaCarrito();
             actualizarContadorCarrito();
         } else {
-            const tbody = document.querySelector('#lista-carrito tbody')
+            const tbody = document.querySelector('#lista-carrito tbody');
             if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">🔒 Inicia sesión para ver tu carrito</td</tr>';
         }
     });
 }
 
 // ============================================
-// CIERRE AUTOMÁTICO DEL MENÚ MÓVIL (DESPUÉS DE 2 SEGUNDOS)
+// 16. CIERRE AUTOMÁTICO DEL MENÚ MÓVIL
 // ============================================
-
 function configurarCierreMenuMovil() {
     const menuCheckbox = document.getElementById('menu');
     const menuOverlay = document.querySelector('.menu-overlay');
     const menuLinks = document.querySelectorAll('.navbar a, .navbar button, .btn-cerrar-sesion, .btn-iniciar-sesion');
     let timeoutId = null;
-
+    
     if (!menuCheckbox) return;
-
+    
     function cerrarMenu() {
         if (menuCheckbox.checked) {
             menuCheckbox.checked = false;
@@ -446,44 +554,38 @@ function configurarCierreMenuMovil() {
             clearTimeout(timeoutId);
         }
     }
-
+    
     function iniciarTemporizadorCierre() {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
+        if (timeoutId) clearTimeout(timeoutId);
         if (menuCheckbox.checked) {
             timeoutId = setTimeout(() => {
                 cerrarMenu();
             }, 2000);
         }
     }
-
+    
     menuCheckbox.addEventListener('change', function() {
         if (this.checked) {
             iniciarTemporizadorCierre();
         } else {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
+            if (timeoutId) clearTimeout(timeoutId);
         }
     });
-
+    
     if (menuOverlay) {
         menuOverlay.addEventListener('click', cerrarMenu);
     }
-
+    
     menuLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            setTimeout(() => {
-                cerrarMenu();
-            }, 100);
+        link.addEventListener('click', () => {
+            setTimeout(() => cerrarMenu(), 100);
         });
     });
 }
 
-// =============================
-// Cambio de botón de navegación
-// =============================
+// ============================================
+// 17. ACTUALIZAR BOTÓN DE NAVEGACIÓN
+// ============================================
 function actualizarBotonNavegacion(user) {
     const authContainer = document.getElementById('auth-button-container');
     if (!authContainer) return;
@@ -537,7 +639,45 @@ function actualizarBotonNavegacion(user) {
 }
 
 // ============================================
-// HACER PEDIDO
+// 18. FUNCIÓN DE BÚSQUEDA
+// ============================================
+function configurarBuscador() {
+    const inputBusqueda = document.getElementById('buscadorProductos');
+    if (!inputBusqueda) return;
+    
+    inputBusqueda.addEventListener('input', (e) => {
+        const termino = e.target.value.toLowerCase().trim();
+        const productos = document.querySelectorAll('.producto-card');
+        let contador = 0;
+        
+        productos.forEach(producto => {
+            const nombre = producto.querySelector('h3')?.textContent.toLowerCase() || '';
+            let marca = '';
+            const parrafos = producto.querySelectorAll('p');
+            for (let i = 0; i < parrafos.length; i++) {
+                if (!parrafos[i].classList.contains('precio') && !parrafos[i].classList.contains('stock')) {
+                    marca = parrafos[i].textContent.toLowerCase();
+                    break;
+                }
+            }
+            
+            if (termino === '' || nombre.includes(termino) || marca.includes(termino)) {
+                producto.style.display = 'flex';
+                contador++;
+            } else {
+                producto.style.display = 'none';
+            }
+        });
+        
+        const resultadosDiv = document.getElementById('resultadosBusqueda');
+        if (resultadosDiv) {
+            resultadosDiv.innerHTML = termino === '' ? '' : `🔍 ${contador} producto(s) encontrado(s)`;
+        }
+    });
+}
+
+// ============================================
+// 19. HACER PEDIDO
 // ============================================
 window.hacerPedido = async () => {
     console.log("🔍 Iniciando función hacerPedido...");
@@ -549,7 +689,7 @@ window.hacerPedido = async () => {
         }, 2000);
         return;
     }
-
+    
     const user = auth.currentUser;
     const carrito = JSON.parse(localStorage.getItem(`carrito_${user.uid}`)) || [];
     
@@ -557,15 +697,15 @@ window.hacerPedido = async () => {
         mostrarNotificacion("🛒 No hay productos en el carrito", "error");
         return;
     }
-
+    
     let nombreUsuario = user.email?.split('@')[0] || "Usuario";
-
+    
     try {
         const { getDatabase, ref, get } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js");
         const dbRealtime = getDatabase();
         const usuarioRef = ref(dbRealtime, `usuarios/${user.uid}`);
         const snapshot = await get(usuarioRef);
-
+        
         if (snapshot.exists()) {
             const userData = snapshot.val();
             nombreUsuario = userData.nombre || nombreUsuario;
@@ -576,18 +716,18 @@ window.hacerPedido = async () => {
         const nombreLocal = localStorage.getItem("usuarioNombre");
         if (nombreLocal) nombreUsuario = nombreLocal;
     }
-
+    
     const totalPedido = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
     const confirmar = confirm(`📦 ¿Confirmar pedido?\n\nTotal: Bs.${totalPedido}\nProductos: ${carrito.length}\n\n¿Deseas realizar este pedido?`);
-
+    
     if (!confirmar) return;
-
+    
     mostrarNotificacion("📦 Procesando pedido...", "info");
     
     try {
         const { addDoc, collection } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
         const pedidosRef = collection(db, "pedidos");
-
+        
         const nuevoPedido = {
             usuarioId: user.uid,
             usuarioEmail: user.email,
@@ -603,18 +743,18 @@ window.hacerPedido = async () => {
                 subtotal: item.precio * item.cantidad
             }))
         };
-
+        
         console.log("📝 Enviando pedido a Firestore:", nuevoPedido);
-
+        
         const docRef = await addDoc(pedidosRef, nuevoPedido);
         localStorage.removeItem(`carrito_${user.uid}`);
-
+        
         mostrarNotificacion(`✅ Pedido #${docRef.id.slice(0,8)} realizado con éxito!`, "success");
-
-        mostrarProductosAlUsuario();
+        
+        cargarProductos();
         actualizarVistaCarrito();
         actualizarContadorCarrito();
-
+        
     } catch (error) {
         console.error("❌ Error al hacer pedido:", error);
         mostrarNotificacion("❌ Error al procesar el pedido: " + error.message, "error");
@@ -622,46 +762,7 @@ window.hacerPedido = async () => {
 };
 
 // ============================================
-// FUNCIÓN DE BÚSQUEDA
-// ============================================
-function configurarBuscador() {
-    const inputBusqueda = document.getElementById('buscadorProductos');
-    if (!inputBusqueda) return;
-
-    inputBusqueda.addEventListener('input', (e) => {
-        const termino = e.target.value.toLowerCase().trim();
-        const productos = document.querySelectorAll('.producto-card');
-        let contador = 0;
-
-        productos.forEach(producto => {
-            const nombre = producto.querySelector('h3')?.textContent.toLowerCase() || '';
-            
-            let marca = '';
-            const parrafos = producto.querySelectorAll('p');
-            for (let i = 0; i < parrafos.length; i++) {
-                if (!parrafos[i].classList.contains('precio') && !parrafos[i].classList.contains('stock')) {
-                    marca = parrafos[i].textContent.toLowerCase();
-                    break;
-                }
-            }
-
-            if (termino === '' || nombre.includes(termino) || marca.includes(termino)) {
-                producto.style.display = 'flex';
-                contador++;
-            } else {
-                producto.style.display = 'none';
-            }
-        });
-
-        const resultadosDiv = document.getElementById('resultadosBusqueda');
-        if (resultadosDiv) {
-            resultadosDiv.innerHTML = termino === '' ? '' : `🔍 ${contador} producto(s) encontrado(s)`;
-        }
-    });
-}
-
-// ============================================
-// CIERRE AL HACER CLIC FUERA DEL CARRITO EN MÓVIL
+// 20. CIERRE AL HACER CLIC FUERA DEL CARRITO
 // ============================================
 document.addEventListener('click', function(event) {
     const carritoDiv = document.getElementById('carrito');
@@ -675,11 +776,13 @@ document.addEventListener('click', function(event) {
 });
 
 // ============================================
-// INICIALIZACIÓN
+// 21. INICIALIZACIÓN
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
     configurarCarritoDesplegable();
-    configurarCierreMenuMovil(); // ← Agregado: cierre automático del menú
+    configurarCierreMenuMovil();
+    configurarFiltros();
+    configurarBuscador();
     
     const btnVaciar = document.getElementById('vaciar-carrito');
     if (btnVaciar) {
@@ -690,5 +793,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     verificarAutenticacion();
-    console.log("✅ product.js funcionando correctamente");
+    console.log("✅ product.js con filtros, ordenamiento y carrito activado");
 });
