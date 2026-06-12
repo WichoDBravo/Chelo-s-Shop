@@ -39,6 +39,20 @@
             <input type="number" id="precio" placeholder="Precio" step="0.01" required>
             <input type="number" id="stock" placeholder="Stock" required>
             <input type="text" id="imagenURL" placeholder="URL de la imagen">
+            <select id="categoria" required style="padding: 12px 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.4); color: white; font-family: 'Poppins', sans-serif; font-size: 14px;">
+                <option value="" disabled selected>📁 Seleccionar categoría</option>
+                <option value="lacteos">🥛 Lácteos</option>
+                <option value="liquidos">💧 Líquidos</option>
+                <option value="charcuteria">🍖 Charcutería</option>
+                <option value="enlatados">🥫 Enlatados</option>
+                <option value="herramientas">🔧 Herramientas</option>
+                <option value="utiles">📚 Útiles</option>
+                <option value="legumbres">🥔 Legumbres</option>
+                <option value="otros">📦 Otros</option>
+            </select>
+<div id="vistaPrevia" style="display: none; margin-top: 10px;">
+    <img id="previewImg" style="max-width: 100px; border-radius: 8px;">
+</div>
             <div id="vistaPrevia" style="display: none; margin-top: 10px;">
                 <img id="previewImg" style="max-width: 100px; border-radius: 8px;">
             </div>
