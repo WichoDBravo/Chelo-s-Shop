@@ -1,7 +1,7 @@
 // ============================================
 // IMPORTACIÓN (CORREGIDA - AGREGAR updateDoc y getDoc)
 // ============================================
-import { db } from '../cheloshopDB/firebase-config.js';
+import { auth, db } from '../cheloshopDB/firebase-config.js';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const productosRef = collection(db, "productos");
@@ -192,7 +192,7 @@ async function cargarProductos() {
                     <p class="precio">💰 Precio: Bs.${data.precio || 0}</p>
                     <p class="stock">📦 Stock: ${data.stock || 0}</p>
                     <p class="marca">🏷️ Marca: ${data.marca || 'Sin marca'}</p>
-                    <p class="categoria-admin"> ${nombreCategoria}</p>
+                    <p class="categoria-admin">📁 ${nombreCategoria}</p>
                     <div class="producto-botones">
                         <button class="btn-editar" onclick="window.editarProducto('${doc.id}')">✏️ Editar</button>
                         <button class="btn-eliminar" onclick="window.eliminarProducto('${doc.id}')">🗑️ Eliminar</button>
