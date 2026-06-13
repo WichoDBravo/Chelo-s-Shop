@@ -838,7 +838,6 @@ th, td {
 /* Estilo para botón de inicio de sesión */
 .btn-iniciar-sesion {
     position: relative;
-    top: 12px;
     padding: 8px 20px !important;
     border-radius: 25px;
     color: white;
