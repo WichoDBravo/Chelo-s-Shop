@@ -116,7 +116,7 @@ function renderizarProductos(productos) {
                 <p style="color:#666;">${producto.marca || ''}</p>
                 <p class="precio" style="font-size:20px; color:#ff9000; font-weight:bold;">💰 Bs.${producto.precio}</p>
                 <p class="stock" style="color:${stockActual > 0 ? '#10b981' : '#ef4444'};">📦 Stock disponible: ${stockActual}</p>
-                <p class="categoria" style="color:#9ca3af; font-size:12px;">🎲 ${obtenerNombreCategoria(producto.categoria)}</p>
+                <p class="categoria" style="color:#9ca3af; font-size:12px;"> ${obtenerNombreCategoria(producto.categoria)}</p>
                 
                 <div class="cantidad-selector" style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0;">
                     <button type="button" class="btn-disminuir" data-id="${producto.id}" style="background:#333; color:white; border:none; width:35px; height:35px; border-radius:8px; cursor:pointer; font-size:18px;">-</button>
@@ -149,7 +149,7 @@ function obtenerNombreCategoria(categoria) {
         'enlatados': '🥫 Enlatados',
         'escolares': '📚 Útiles Escolares',
         'legumbres': '🥔 Legumbres / Verduras',
-        'otros': '📦 Otros'
+        'otros': '🎲 Otros'
     };
     return categorias[categoria] || '📦 Producto';
 }
@@ -834,9 +834,92 @@ document.addEventListener('click', function(event) {
 });
 
 // ============================================
+// CIERRE AUTOMÁTICO DE SESIÓN AL CERRAR PESTAÑA
+// ============================================
+
+let sesionCerrada = false;
+
+async function cerrarSesionAlSalir() {
+    if (sesionCerrada) return;
+    
+    if (auth && auth.currentUser) {
+        sesionCerrada = true;
+        
+        try {
+            // Obtener UID antes de cerrar sesión
+            const uid = auth.currentUser.uid;
+            
+            // Cerrar sesión en Firebase
+            await signOut(auth);
+            
+            // Limpiar localStorage
+            localStorage.removeItem(`carrito_${uid}`);
+            localStorage.removeItem("usuarioLogueado");
+            localStorage.removeItem("usuarioNombre");
+            localStorage.removeItem("usuarioEmail");
+            localStorage.removeItem("usuarioUID");
+            
+            // Limpiar sessionStorage
+            sessionStorage.removeItem("sesionActiva");
+            sessionStorage.removeItem("timestamp");
+            
+            console.log("🔒 Sesión cerrada automáticamente al salir");
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+        }
+    }
+}
+
+// Evento principal: cuando se cierra la pestaña o navegador
+window.addEventListener('beforeunload', () => {
+    cerrarSesionAlSalir();
+});
+
+// Evento adicional: cuando se recarga la página (NO cierra sesión, solo actualiza)
+window.addEventListener('load', () => {
+    // Marcar que esta pestaña tiene sesión activa
+    if (auth && auth.currentUser) {
+        sessionStorage.setItem('sesionActiva', 'true');
+        sessionStorage.setItem('timestamp', Date.now().toString());
+    }
+});
+
+// Verificar al inicio si la sesión es válida para esta pestaña
+document.addEventListener('DOMContentLoaded', () => {
+    const sesionActiva = sessionStorage.getItem('sesionActiva');
+    
+    // Si hay usuario logueado pero no hay marca de sesión en esta pestaña
+    if (auth && auth.currentUser && !sesionActiva) {
+        console.log("⚠️ Sesión sin marca de pestaña, cerrando...");
+        signOut(auth).then(() => {
+            localStorage.removeItem("usuarioLogueado");
+            localStorage.removeItem("usuarioNombre");
+            localStorage.removeItem("usuarioEmail");
+            localStorage.removeItem("usuarioUID");
+            window.location.reload();
+        });
+    }
+});
+
+// ============================================
 // 21. INICIALIZACIÓN
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+    // Verificar sesión por pestaña
+    const sesionActiva = sessionStorage.getItem('sesionActiva');
+    if (auth && auth.currentUser && !sesionActiva) {
+        console.log("⚠️ Sesión sin marca de pestaña, cerrando...");
+        signOut(auth).then(() => {
+            localStorage.removeItem("usuarioLogueado");
+            localStorage.removeItem("usuarioNombre");
+            localStorage.removeItem("usuarioEmail");
+            localStorage.removeItem("usuarioUID");
+            window.location.reload();
+        });
+        return; // Salir si se cerró sesión
+    }
+    
+    // Inicializar todo
     configurarCarritoDesplegable();
     configurarCierreMenuMovil();
     configurarFiltros();
